@@ -1,21 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daraz Mini</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Work Allocation & Tracking System</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>Daraz Mini</h1>
-    <nav>
-      <a href="cart.html">🛒 Cart</a>
-    </nav>
-  </header>
+  <div class="container">
+    <h1>Work Allocation & Tracking System</h1>
+    <table id="workerTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Worker Name</th>
+          <th>Current Task</th>
+          <th>Update Work</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Workers will be added by JavaScript -->
+      </tbody>
+    </table>
+  </div>
 
-  <main id="product-list"></main>
+  <!-- Update Popup -->
+  <div id="popup" class="popup">
+    <div class="popup-content">
+      <h3>Update Work</h3>
+      <select id="taskSelect"></select>
+      <button id="saveBtn">Save</button>
+      <button id="closeBtn">Close</button>
+    </div>
+  </div>
 
-  <script src="js/app.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
