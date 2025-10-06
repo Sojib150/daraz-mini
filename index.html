@@ -1,39 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Work Allocation & Tracking System</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Econsave TPG1 - Work Tracking</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Poppins', sans-serif;
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    body {
+      background: #f3fff3;
+      color: #222;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #007e33;
+      margin-bottom: 10px;
+    }
+    .supervisor {
+      color: #555;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: white;
+      width: 100%;
+      max-width: 600px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .worker {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0;
+    }
+    select {
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: #eaffea;
+      color: #007e33;
+      font-weight: 600;
+    }
+    button {
+      background: #007e33;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #006627;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Work Allocation & Tracking System</h1>
-    <table id="workerTable">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Worker Name</th>
-          <th>Current Task</th>
-          <th>Update Work</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Workers will be added by JavaScript -->
-      </tbody>
-    </table>
-  </div>
+  <h1>Econsave TPG1</h1>
+  <div class="supervisor">Supervisor: <b>MOHAMMAD MASUD</b></div>
 
-  <!-- Update Popup -->
-  <div id="popup" class="popup">
-    <div class="popup-content">
-      <h3>Update Work</h3>
-      <select id="taskSelect"></select>
-      <button id="saveBtn">Save</button>
-      <button id="closeBtn">Close</button>
-    </div>
-  </div>
+  <div id="workerList"></div>
 
-  <script src="script.js"></script>
+  <button onclick="saveAll()">💾 Save Updates</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6b93A_HeU4FADs3o2Ysw6-dlRRS2TbZk",
+      authDomain: "telegram-miniapp-e8cc0.firebaseapp.com",
+      projectId: "telegram-miniapp-e8cc0",
+      storageBucket: "telegram-miniapp-e8cc0.firebasestorage.app",
+      messagingSenderId: "827930913054",
+      appId: "1:827930913054:web:502b56e0c198d8e9ff410f",
+      databaseURL: "https://telegram-miniapp-e8cc0-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const workers = [
+      { id: "W001", name: "RAHIM" },
+      { id: "W002", name: "KARIM" },
+      { id: "W003", name: "SALAM" },
+      { id: "W004", name: "JABBAR" },
+      { id: "W005", name: "ALAMIN" },
+    ];
+
+    const tasks = [
+      "Unloading goods from container",
+      "Arranging goods by barcode",
+      "Receiving goods",
+      "Picking goods",
+      "Driving forklift",
+      "MC (Medical leave / sick)",
+      "Store cleaning",
+      "No work"
+    ];
+
+    const listDiv = document.getElementById("workerList");
+
+    workers.forEach(w => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <div class="worker">
+          <strong>${w.name}</strong>
+          <select id="task_${w.id}">
+            ${tasks.map(t => `<option value="${t}">${t}</option>`).join("")}
+          </select>
+        </div>
+      `;
+      listDiv.appendChild(div);
+    });
+
+    function loadData() {
+      const dbRef = ref(db, "EconsaveTPG1");
+      onValue(dbRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          Object.keys(data).forEach(id => {
+            const select = document.getElementById("task_" + id);
+            if (select) select.value = data[id];
+          });
+        }
+      });
+    }
+
+    function saveAll() {
+      workers.forEach(w => {
+        const select = document.getElementById("task_" + w.id);
+        set(ref(db, "EconsaveTPG1/" + w.id), select.value);
+      });
+      alert("✅ All updates saved successfully!");
+    }
+
+    loadData();
+  </script>
 </body>
 </html>
