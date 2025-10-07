@@ -1,84 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Econsave TPG1 Work Tracker</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f5f5f5;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #2b7a0b;
-      color: white;
-      text-align: center;
-      padding: 15px 0;
-      font-size: 22px;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-    }
-    .container {
-      max-width: 800px;
-      margin: 25px auto;
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .worker {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #eee;
-      padding: 12px 0;
-      flex-wrap: wrap;
-    }
-    .worker:last-child {
-      border-bottom: none;
-    }
-    .worker span {
-      font-weight: 600;
-      flex: 1;
-      min-width: 150px;
-    }
-    select {
-      padding: 6px 8px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-      margin-right: 10px;
-    }
-    button {
-      background-color: #2b7a0b;
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      transition: 0.2s;
-    }
-    button:hover {
-      background-color: #256b09;
-    }
-    .time {
-      font-size: 12px;
-      color: gray;
-      margin-top: 4px;
-      flex-basis: 100%;
-    }
-  </style>
-</head>
-<body>
-  <header>Econsave TPG1 Work Tracker</header>
-  <div class="container" id="workerList"></div>
-
-  <!-- Firebase -->
   <script type="module">
-    // Firebase Configuration
+    // ✅ Firebase configuration
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyB6b93A_HeU4FADs3o2Ysw6-dlRRS2TbZk",
       authDomain: "telegram-miniapp-e8cc0.firebaseapp.com",
@@ -89,49 +19,21 @@
       databaseURL: "https://telegram-miniapp-e8cc0-default-rtdb.asia-southeast1.firebasedatabase.app/"
     };
 
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
-
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Worker names
+    // ✅ Workers and task list
     const workers = [
-      "MOHAMMAD MASUD",
-      "RAFIUL ISLAM",
-      "ALAMIN",
-      "MIAH SOHAG",
-      "SHARIFUL ISLAM",
-      "SOJEEB MIAH",
-      "DELUAR",
-      "SAJIB",
-      "MIAH RUBEL",
-      "MATANG DAH",
-      "RANA SOHAL",
-      "BAINATH YADAV",
-      "KAMESHWER",
-      "RANJIT KUMAR",
-      "SANJAY KUMAR",
-      "RAI AASH BAHADUR",
-      "SAHAN UPENDRA",
-      "SAH TELI SHANKAR PRASAD",
-      "RAY TEJNAYAN",
-      "AHAMMED MD SAMIM",
-      "MOHAMMED ASHRAFUL",
-      "SHEKH MD SAKIB",
-      "ISLAM MD AHANARUL",
-      "BIJAYA TAMANG",
-      "THAKUR JAY PRAKASH",
-      "BOHARA LAXMAN",
-      "BHANDARI LIL MAN",
-      "BISHWAKARMA BHUPAT RAJ",
-      "BISHOKARMA NOM BAHADUR",
-      "BOHARA PREM",
-      "YADAV DINESH KUMAR",
-      "BK RAJ KUMAR"
+      "MOHAMMAD MASUD","RAFIUL ISLAM","ALAMIN","MIAH SOHAG","SHARIFUL ISLAM",
+      "SOJEEB MIAH","DELUAR","SAJIB","MIAH RUBEL","MATANG DAH","RANA SOHAL",
+      "BAINATH YADAV","KAMESHWER","RANJIT KUMAR","SANJAY KUMAR","RAI AASH BAHADUR",
+      "SAHAN UPENDRA","SAH TELI SHANKAR PRASAD","RAY TEJNAYAN","AHAMMED MD SAMIM",
+      "MOHAMMED ASHRAFUL","SHEKH MD SAKIB","ISLAM MD AHANARUL","BIJAYA TAMANG",
+      "THAKUR JAY PRAKASH","BOHARA LAXMAN","BHANDARI LIL MAN","BISHWAKARMA BHUPAT RAJ",
+      "BISHOKARMA NOM BAHADUR","BOHARA PREM","YADAV DINESH KUMAR","BK RAJ KUMAR"
     ];
 
-    const workOptions = [
+    const tasks = [
       "Unloading goods from container",
       "Arranging goods by barcode",
       "Receiving goods",
@@ -143,46 +45,128 @@
       "No work"
     ];
 
-    const workerList = document.getElementById("workerList");
+    // ✅ Load data from Firebase
+    const workerContainer = document.addEventListener("DOMContentLoaded", () => {
+      const listDiv = document.getElementById("workers");
+      listDiv.innerHTML = "<h3>Loading data...</h3>";
 
-    // Display workers
-    workers.forEach(name => {
-      const div = document.createElement("div");
-      div.className = "worker";
-      div.innerHTML = `
-        <span>${name}</span>
-        <select id="${name.replace(/\s+/g, '_')}">
-          ${workOptions.map(w => `<option value="${w}">${w}</option>`).join('')}
-        </select>
-        <button id="btn_${name.replace(/\s+/g, '_')}">Update</button>
-        <div class="time" id="time_${name.replace(/\s+/g, '_')}"></div>
-      `;
-      workerList.appendChild(div);
-
-      const select = div.querySelector("select");
-      const button = div.querySelector("button");
-      const timeDisplay = div.querySelector(".time");
-
-      const workRef = ref(db, "workers/" + name);
-
-      onValue(workRef, (snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          select.value = data.work;
-          timeDisplay.textContent = data.time ? `Last updated: ${data.time}` : "";
-        }
-      });
-
-      button.addEventListener("click", () => {
-        const now = new Date();
-        const timeString = now.toLocaleString('en-MY', { timeZone: 'Asia/Kuala_Lumpur' });
-        set(workRef, {
-          work: select.value,
-          time: timeString
+      const dbRef = ref(db, "workers/");
+      onValue(dbRef, (snapshot) => {
+        const data = snapshot.val() || {};
+        listDiv.innerHTML = "";
+        workers.forEach((name) => {
+          const info = data[name] || {};
+          const card = document.createElement("div");
+          card.className = "worker-card";
+          card.innerHTML = `
+            <h3>${name}</h3>
+            <p><b>Current Task:</b> ${info.currentTask || "Not Assigned"}</p>
+            <p><b>Last Update:</b> ${info.lastUpdate || "N/A"}</p>
+            <div class="buttons">
+              <button onclick='viewDetails("${name}")'>View Details</button>
+              <button onclick='updateTask("${name}")'>Update</button>
+            </div>
+          `;
+          listDiv.appendChild(card);
         });
-        timeDisplay.textContent = `Last updated: ${timeString}`;
       });
     });
+
+    // ✅ View weekly details
+    window.viewDetails = (name) => {
+      const dbRef = ref(db, "workers/" + name + "/records");
+      onValue(dbRef, (snapshot) => {
+        const data = snapshot.val();
+        if (!data) return alert("No records for this worker yet.");
+        let msg = "";
+        for (const [date, work] of Object.entries(data)) {
+          msg += `${date} → ${work}\n`;
+        }
+        alert(`${name}'s Weekly Record:\n\n${msg}`);
+      }, { onlyOnce: true });
+    };
+
+    // ✅ Update Task
+    window.updateTask = (name) => {
+      const selected = prompt(`Select new task for ${name}:\n\n${tasks.join("\n")}`);
+      if (!selected || !tasks.includes(selected)) return alert("Invalid task selected.");
+      const time = new Date().toLocaleString();
+      const today = new Date().toISOString().split("T")[0];
+      set(ref(db, "workers/" + name), {
+        currentTask: selected,
+        lastUpdate: time,
+        records: {
+          ...(workers[name]?.records || {}),
+          [today]: selected
+        }
+      });
+      alert(`${name} updated successfully.`);
+    };
   </script>
+
+  <style>
+    body {
+      background-color: #f6faf7;
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #0a5c2c;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.4em;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    #workers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 15px;
+      padding: 20px;
+    }
+
+    .worker-card {
+      background: white;
+      border-radius: 14px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h3 {
+      color: #0a5c2c;
+      margin: 0 0 8px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    button {
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: white;
+      font-weight: 500;
+    }
+
+    button:first-child {
+      background-color: #0a5c2c;
+    }
+
+    button:last-child {
+      background-color: #0077cc;
+    }
+  </style>
+</head>
+<body>
+  <header>Econsave TPG1 Work Tracker</header>
+  <div id="workers"></div>
 </body>
 </html>
