@@ -1,13 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Econsave TPG1 Work Tracker</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f7faf7;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #0a5c2c;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 1.4em;
+      font-weight: 600;
+    }
+    #workers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 15px;
+      padding: 20px;
+    }
+    .worker-card {
+      background: white;
+      border-radius: 14px;
+      padding: 15px;
+      box-shadow: 0 3px 7px rgba(0,0,0,0.08);
+    }
+    .worker-card h3 {
+      color: #0a5c2c;
+      margin-bottom: 8px;
+    }
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    button {
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: white;
+      font-weight: 500;
+    }
+    .view-btn { background-color: #0a5c2c; }
+    .update-btn { background-color: #0077cc; }
+
+    /* Modal styling */
+    #modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .modal-content select, .modal-content button {
+      width: 100%;
+      margin-top: 10px;
+    }
+    .close {
+      float: right;
+      cursor: pointer;
+      font-size: 1.2em;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <header>Econsave TPG1 Work Tracker</header>
+  <div id="workers"></div>
+
+  <!-- Modal -->
+  <div id="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h3 id="modalTitle">Update Task</h3>
+      <select id="taskSelect"></select>
+      <button id="saveBtn">Save</button>
+    </div>
+  </div>
+
   <script type="module">
-    // ✅ Firebase configuration
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyB6b93A_HeU4FADs3o2Ysw6-dlRRS2TbZk",
@@ -22,7 +111,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // ✅ Workers and task list
     const workers = [
       "MOHAMMAD MASUD","RAFIUL ISLAM","ALAMIN","MIAH SOHAG","SHARIFUL ISLAM",
       "SOJEEB MIAH","DELUAR","SAJIB","MIAH RUBEL","MATANG DAH","RANA SOHAL",
@@ -45,16 +133,29 @@
       "No work"
     ];
 
-    // ✅ Load data from Firebase
-    const workerContainer = document.addEventListener("DOMContentLoaded", () => {
-      const listDiv = document.getElementById("workers");
-      listDiv.innerHTML = "<h3>Loading data...</h3>";
+    const listDiv = document.getElementById("workers");
+    const modal = document.getElementById("modal");
+    const taskSelect = document.getElementById("taskSelect");
+    const saveBtn = document.getElementById("saveBtn");
+    const modalTitle = document.getElementById("modalTitle");
+    const closeModal = document.querySelector(".close");
+    let currentWorker = null;
 
+    // Populate dropdown
+    tasks.forEach(task => {
+      const opt = document.createElement("option");
+      opt.value = task;
+      opt.textContent = task;
+      taskSelect.appendChild(opt);
+    });
+
+    // Load data
+    function loadWorkers() {
       const dbRef = ref(db, "workers/");
       onValue(dbRef, (snapshot) => {
         const data = snapshot.val() || {};
         listDiv.innerHTML = "";
-        workers.forEach((name) => {
+        workers.forEach(name => {
           const info = data[name] || {};
           const card = document.createElement("div");
           card.className = "worker-card";
@@ -63,110 +164,64 @@
             <p><b>Current Task:</b> ${info.currentTask || "Not Assigned"}</p>
             <p><b>Last Update:</b> ${info.lastUpdate || "N/A"}</p>
             <div class="buttons">
-              <button onclick='viewDetails("${name}")'>View Details</button>
-              <button onclick='updateTask("${name}")'>Update</button>
+              <button class="view-btn" onclick='viewDetails("${name}")'>View Details</button>
+              <button class="update-btn" onclick='openModal("${name}")'>Update</button>
             </div>
           `;
           listDiv.appendChild(card);
         });
       });
-    });
+    }
+    loadWorkers();
 
-    // ✅ View weekly details
+    // Open modal
+    window.openModal = (name) => {
+      currentWorker = name;
+      modal.style.display = "flex";
+      modalTitle.textContent = `Update: ${name}`;
+    };
+
+    closeModal.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
+
+    // Save update
+    saveBtn.onclick = async () => {
+      if (!currentWorker) return;
+      const selectedTask = taskSelect.value;
+      const now = new Date();
+      const timestamp = now.toLocaleString();
+      const date = now.toISOString().split("T")[0];
+      const workerRef = ref(db, "workers/" + currentWorker);
+
+      const snapshot = await get(workerRef);
+      const prevData = snapshot.val() || {};
+
+      const newRecords = prevData.records || {};
+      newRecords[date] = selectedTask;
+
+      await set(workerRef, {
+        currentTask: selectedTask,
+        lastUpdate: timestamp,
+        records: newRecords
+      });
+
+      alert(`${currentWorker}'s task updated.`);
+      modal.style.display = "none";
+    };
+
+    // View weekly details
     window.viewDetails = (name) => {
       const dbRef = ref(db, "workers/" + name + "/records");
       onValue(dbRef, (snapshot) => {
         const data = snapshot.val();
         if (!data) return alert("No records for this worker yet.");
         let msg = "";
-        for (const [date, work] of Object.entries(data)) {
-          msg += `${date} → ${work}\n`;
-        }
+        Object.keys(data).slice(-7).forEach(date => {
+          msg += `${date} → ${data[date]}\n`;
+        });
         alert(`${name}'s Weekly Record:\n\n${msg}`);
       }, { onlyOnce: true });
     };
-
-    // ✅ Update Task
-    window.updateTask = (name) => {
-      const selected = prompt(`Select new task for ${name}:\n\n${tasks.join("\n")}`);
-      if (!selected || !tasks.includes(selected)) return alert("Invalid task selected.");
-      const time = new Date().toLocaleString();
-      const today = new Date().toISOString().split("T")[0];
-      set(ref(db, "workers/" + name), {
-        currentTask: selected,
-        lastUpdate: time,
-        records: {
-          ...(workers[name]?.records || {}),
-          [today]: selected
-        }
-      });
-      alert(`${name} updated successfully.`);
-    };
   </script>
-
-  <style>
-    body {
-      background-color: #f6faf7;
-      font-family: "Poppins", sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background-color: #0a5c2c;
-      color: white;
-      padding: 15px;
-      text-align: center;
-      font-size: 1.4em;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-    }
-
-    #workers {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 15px;
-      padding: 20px;
-    }
-
-    .worker-card {
-      background: white;
-      border-radius: 14px;
-      padding: 15px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    h3 {
-      color: #0a5c2c;
-      margin: 0 0 8px;
-    }
-
-    .buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }
-
-    button {
-      border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      color: white;
-      font-weight: 500;
-    }
-
-    button:first-child {
-      background-color: #0a5c2c;
-    }
-
-    button:last-child {
-      background-color: #0077cc;
-    }
-  </style>
-</head>
-<body>
-  <header>Econsave TPG1 Work Tracker</header>
-  <div id="workers"></div>
 </body>
 </html>
