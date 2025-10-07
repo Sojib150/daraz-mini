@@ -1,169 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Econsave TPG1 Work Tracker</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      font-family: "Poppins", sans-serif;
+      background: #f7faf7;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #0a5c2c;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 1.4em;
+      font-weight: 600;
+    }
+    #workers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 15px;
       padding: 20px;
     }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    .card {
-      background: #fff;
-      border-radius: 12px;
+    .worker-card {
+      background: white;
+      border-radius: 14px;
       padding: 15px;
-      margin: 10px 0;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 7px rgba(0,0,0,0.08);
     }
-    .card h3 {
-      margin: 0;
-      color: #111;
+    .worker-card h3 {
+      color: #0a5c2c;
+      margin-bottom: 8px;
     }
-    .card p {
-      color: #666;
-      margin: 5px 0;
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
     }
     button {
-      background-color: #007bff;
-      color: #fff;
       border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
       cursor: pointer;
-      margin-right: 5px;
+      color: white;
+      font-weight: 500;
     }
-    button:hover {
-      background-color: #0056b3;
+    .view-btn { background-color: #0a5c2c; }
+    .update-btn { background-color: #0077cc; }
+
+    /* Modal styling */
+    #modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
     }
-    select {
-      padding: 6px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
-    .record {
-      background: #f0f8ff;
-      margin-top: 5px;
-      padding: 5px;
-      border-radius: 6px;
+    .modal-content select, .modal-content button {
+      width: 100%;
+      margin-top: 10px;
+    }
+    .close {
+      float: right;
+      cursor: pointer;
+      font-size: 1.2em;
+      color: #888;
     }
   </style>
 </head>
 <body>
-  <h1>Econsave TPG1 Work Tracker</h1>
-  <div id="workerList"></div>
+  <header>Econsave TPG1 Work Tracker</header>
+  <div id="workers"></div>
 
-  <!-- Firebase -->
+  <!-- Modal -->
+  <div id="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h3 id="modalTitle">Update Task</h3>
+      <select id="taskSelect"></select>
+      <button id="saveBtn">Save</button>
+    </div>
+  </div>
+
   <script type="module">
-    // Firebase SDK
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyB6b93A_HeU4FADs3o2Ysw6-dlRRS2TbZk",
       authDomain: "telegram-miniapp-e8cc0.firebaseapp.com",
-      databaseURL: "https://telegram-miniapp-e8cc0-default-rtdb.asia-southeast1.firebasedatabase.app/",
       projectId: "telegram-miniapp-e8cc0",
       storageBucket: "telegram-miniapp-e8cc0.firebasestorage.app",
       messagingSenderId: "827930913054",
-      appId: "1:827930913054:web:502b56e0c198d8e9ff410f"
+      appId: "1:827930913054:web:502b56e0c198d8e9ff410f",
+      databaseURL: "https://telegram-miniapp-e8cc0-default-rtdb.asia-southeast1.firebasedatabase.app/"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
     const workers = [
-      "MOHAMMAD MASUD","RAFIUL ISLAM","ALAMIN","MIAH SOHAG","SHARIFUL ISLAM","SOJEEB MIAH",
-      "DELUAR","SAJIB","MIAH RUBEL","MATANG DAH","RANA SOHAL","BAINATH YADAV","KAMESHWER",
-      "RANJIT KUMAR","SANJAY KUMAR","RAI AASH BAHADUR","SAHAN UPENDRA","SAH TELI SHANKAR PRASAD",
-      "RAY TEJNAYAN","AHAMMED MD SAMIM","MOHAMMED ASHRAFUL","SHEKH MD SAKIB","ISLAM MD AHANARUL",
-      "BIJAYA TAMANG","THAKUR JAY PRAKASH","BOHARA LAXMAN","BHANDARI LIL MAN","BISHWAKARMA BHUPAT RAJ",
+      "MOHAMMAD MASUD","RAFIUL ISLAM","ALAMIN","MIAH SOHAG","SHARIFUL ISLAM",
+      "SOJEEB MIAH","DELUAR","SAJIB","MIAH RUBEL","MATANG DAH","RANA SOHAL",
+      "BAINATH YADAV","KAMESHWER","RANJIT KUMAR","SANJAY KUMAR","RAI AASH BAHADUR",
+      "SAHAN UPENDRA","SAH TELI SHANKAR PRASAD","RAY TEJNAYAN","AHAMMED MD SAMIM",
+      "MOHAMMED ASHRAFUL","SHEKH MD SAKIB","ISLAM MD AHANARUL","BIJAYA TAMANG",
+      "THAKUR JAY PRAKASH","BOHARA LAXMAN","BHANDARI LIL MAN","BISHWAKARMA BHUPAT RAJ",
       "BISHOKARMA NOM BAHADUR","BOHARA PREM","YADAV DINESH KUMAR","BK RAJ KUMAR"
     ];
 
-    const workOptions = [
+    const tasks = [
       "Unloading goods from container",
       "Arranging goods by barcode",
       "Receiving goods",
       "Picking goods",
+      "QC checking",
       "Driving forklift",
       "MC (Medical leave / sick)",
       "Store cleaning",
       "No work"
     ];
 
-    const workerList = document.getElementById("workerList");
+    const listDiv = document.getElementById("workers");
+    const modal = document.getElementById("modal");
+    const taskSelect = document.getElementById("taskSelect");
+    const saveBtn = document.getElementById("saveBtn");
+    const modalTitle = document.getElementById("modalTitle");
+    const closeModal = document.querySelector(".close");
+    let currentWorker = null;
 
-    workers.forEach(name => {
-      const div = document.createElement("div");
-      div.className = "card";
-      div.innerHTML = `
-        <h3>${name}</h3>
-        <p id="status-${name}">Current Work: <i>Loading...</i></p>
-        <button onclick="updateWork('${name}')">Update</button>
-        <button onclick="viewDetails('${name}')">View Details</button>
-        <div id="details-${name}" style="display:none;"></div>
-      `;
-      workerList.appendChild(div);
+    // Populate dropdown
+    tasks.forEach(task => {
+      const opt = document.createElement("option");
+      opt.value = task;
+      opt.textContent = task;
+      taskSelect.appendChild(opt);
     });
 
-    window.updateWork = (name) => {
-      const work = prompt("Select Work:\n" + workOptions.join("\n"));
-      if (!work || !workOptions.includes(work)) return alert("Invalid selection!");
+    // Load data
+    function loadWorkers() {
+      const dbRef = ref(db, "workers/");
+      onValue(dbRef, (snapshot) => {
+        const data = snapshot.val() || {};
+        listDiv.innerHTML = "";
+        workers.forEach(name => {
+          const info = data[name] || {};
+          const card = document.createElement("div");
+          card.className = "worker-card";
+          card.innerHTML = `
+            <h3>${name}</h3>
+            <p><b>Current Task:</b> ${info.currentTask || "Not Assigned"}</p>
+            <p><b>Last Update:</b> ${info.lastUpdate || "N/A"}</p>
+            <div class="buttons">
+              <button class="view-btn" onclick='viewDetails("${name}")'>View Details</button>
+              <button class="update-btn" onclick='openModal("${name}")'>Update</button>
+            </div>
+          `;
+          listDiv.appendChild(card);
+        });
+      });
+    }
+    loadWorkers();
 
+    // Open modal
+    window.openModal = (name) => {
+      currentWorker = name;
+      modal.style.display = "flex";
+      modalTitle.textContent = `Update: ${name}`;
+    };
+
+    closeModal.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
+
+    // Save update
+    saveBtn.onclick = async () => {
+      if (!currentWorker) return;
+      const selectedTask = taskSelect.value;
       const now = new Date();
       const timestamp = now.toLocaleString();
-      const newRecord = { work, time: timestamp };
+      const date = now.toISOString().split("T")[0];
+      const workerRef = ref(db, "workers/" + currentWorker);
 
-      const workerRef = ref(db, "workers/" + name);
-      const pushRef = push(workerRef);
-      set(pushRef, newRecord);
+      const snapshot = await get(workerRef);
+      const prevData = snapshot.val() || {};
 
-      alert(`${name} updated to "${work}" at ${timestamp}`);
+      const newRecords = prevData.records || {};
+      newRecords[date] = selectedTask;
+
+      await set(workerRef, {
+        currentTask: selectedTask,
+        lastUpdate: timestamp,
+        records: newRecords
+      });
+
+      alert(`${currentWorker}'s task updated.`);
+      modal.style.display = "none";
     };
 
+    // View weekly details
     window.viewDetails = (name) => {
-      const detailDiv = document.getElementById("details-" + name);
-      const workerRef = ref(db, "workers/" + name);
-
-      onValue(workerRef, (snapshot) => {
+      const dbRef = ref(db, "workers/" + name + "/records");
+      onValue(dbRef, (snapshot) => {
         const data = snapshot.val();
-        if (!data) {
-          detailDiv.innerHTML = "<p>No records found.</p>";
-          detailDiv.style.display = "block";
-          return;
-        }
-
-        const entries = Object.values(data)
-          .sort((a, b) => new Date(b.time) - new Date(a.time))
-          .slice(0, 7); // Last 7 records
-
-        detailDiv.innerHTML = entries.map(e =>
-          `<div class='record'><strong>${e.time}</strong> — ${e.work}</div>`
-        ).join("");
-
-        detailDiv.style.display = "block";
-      });
+        if (!data) return alert("No records for this worker yet.");
+        let msg = "";
+        Object.keys(data).slice(-7).forEach(date => {
+          msg += `${date} → ${data[date]}\n`;
+        });
+        alert(`${name}'s Weekly Record:\n\n${msg}`);
+      }, { onlyOnce: true });
     };
-
-    // Show current work
-    workers.forEach(name => {
-      const workerRef = ref(db, "workers/" + name);
-      onValue(workerRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          const last = Object.values(data).pop();
-          document.getElementById("status-" + name).innerHTML = `Current Work: <b>${last.work}</b> <br><small>${last.time}</small>`;
-        } else {
-          document.getElementById("status-" + name).innerHTML = "Current Work: <i>Not assigned</i>";
-        }
-      });
-    });
   </script>
 </body>
 </html>
