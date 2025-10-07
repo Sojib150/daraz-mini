@@ -1,83 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Econsave TPG1 - Work Tracking</title>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Econsave TPG1 - Work Tracker</title>
   <style>
-    * {
-      font-family: 'Poppins', sans-serif;
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
     body {
-      background: #f3fff3;
-      color: #222;
-      display: flex; flex-direction: column;
-      align-items: center;
-      padding: 20px;
+      font-family: "Poppins", sans-serif;
+      background: #f2fdf4;
+      margin: 0;
+      padding: 0;
     }
-    h1 {
-      color: #007e33;
-      margin-bottom: 10px;
+    header {
+      background: #007f33;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 20px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
-    .supervisor {
-      color: #555;
-      font-size: 14px;
-      margin-bottom: 20px;
+    .container {
+      max-width: 850px;
+      margin: 25px auto;
+      padding: 0 15px;
     }
     .card {
       background: white;
-      width: 100%;
-      max-width: 600px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 14px;
       padding: 15px;
-      margin-bottom: 15px;
-    }
-    .worker {
+      margin-bottom: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 8px 0;
+      transition: 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.02);
+    }
+    .info {
+      flex: 1;
+    }
+    .name {
+      font-weight: 600;
+      color: #005c1f;
+      font-size: 16px;
+    }
+    .id {
+      font-size: 13px;
+      color: gray;
     }
     select {
       padding: 6px;
-      border-radius: 6px;
+      border-radius: 8px;
       border: 1px solid #ccc;
-      background: #eaffea;
-      color: #007e33;
-      font-weight: 600;
+      background: #f0fdf4;
+      font-weight: 500;
     }
     button {
-      background: #007e33;
+      background: #007f33;
       color: white;
-      padding: 8px 16px;
       border: none;
+      padding: 7px 12px;
       border-radius: 8px;
-      font-weight: 600;
-      margin-top: 10px;
       cursor: pointer;
+      font-weight: bold;
+      margin-left: 6px;
     }
     button:hover {
-      background: #006627;
+      background: #00a347;
     }
   </style>
 </head>
 <body>
-  <h1>Econsave TPG1</h1>
-  <div class="supervisor">Supervisor: <b>MOHAMMAD MASUD</b></div>
+  <header>
+    🏭 Econsave TPG1 - Work Allocation & Tracking System
+  </header>
 
-  <div id="workerList"></div>
+  <div class="container" id="workerList"></div>
 
-  <button onclick="saveAll()">💾 Save Updates</button>
-
+  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyB6b93A_HeU4FADs3o2Ysw6-dlRRS2TbZk",
       authDomain: "telegram-miniapp-e8cc0.firebaseapp.com",
@@ -91,63 +99,87 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    // Workers list (add all employees here)
     const workers = [
-      { id: "W001", name: "RAHIM" },
-      { id: "W002", name: "KARIM" },
-      { id: "W003", name: "SALAM" },
-      { id: "W004", name: "JABBAR" },
-      { id: "W005", name: "ALAMIN" },
+      { id: "EC001", name: "MOHAMMAD MASUD (Supervisor)" },
+      { id: "EC002", name: "MD RAHIM" },
+      { id: "EC003", name: "ABDUL KARIM" },
+      { id: "EC004", name: "MD SALAM" },
+      { id: "EC005", name: "HASAN ALI" },
+      { id: "EC006", name: "RAKIB HOSSAIN" },
+      { id: "EC007", name: "SHAFIQ ISLAM" },
+      { id: "EC008", name: "JONY AHMED" },
+      { id: "EC009", name: "TANVIR AHMED" },
+      { id: "EC010", name: "MASUM RANA" },
+      { id: "EC011", name: "SOHEL" },
+      { id: "EC012", name: "KAMAL" },
+      { id: "EC013", name: "NAYEEM" },
+      { id: "EC014", name: "SAGOR" },
+      { id: "EC015", name: "RUBEL" },
+      { id: "EC016", name: "ARIF" },
+      { id: "EC017", name: "BIPLOB" },
+      { id: "EC018", name: "SUMON" },
+      { id: "EC019", name: "JAHID" },
+      { id: "EC020", name: "RANA" }
     ];
 
-    const tasks = [
+    // Work list
+    const workList = [
       "Unloading goods from container",
       "Arranging goods by barcode",
       "Receiving goods",
       "Picking goods",
+      "QC checking",
       "Driving forklift",
       "MC (Medical leave / sick)",
       "Store cleaning",
       "No work"
     ];
 
-    const listDiv = document.getElementById("workerList");
+    const workerListDiv = document.getElementById("workerList");
 
-    workers.forEach(w => {
-      const div = document.createElement("div");
-      div.className = "card";
-      div.innerHTML = `
-        <div class="worker">
-          <strong>${w.name}</strong>
-          <select id="task_${w.id}">
-            ${tasks.map(t => `<option value="${t}">${t}</option>`).join("")}
-          </select>
-        </div>
-      `;
-      listDiv.appendChild(div);
-    });
+    // Build UI
+    workers.forEach((worker) => {
+      const card = document.createElement("div");
+      card.className = "card";
 
-    function loadData() {
-      const dbRef = ref(db, "EconsaveTPG1");
+      const info = document.createElement("div");
+      info.className = "info";
+      info.innerHTML = `<div class='name'>${worker.name}</div><div class='id'>${worker.id}</div>`;
+
+      const select = document.createElement("select");
+      workList.forEach((work) => {
+        const opt = document.createElement("option");
+        opt.value = work;
+        opt.textContent = work;
+        select.appendChild(opt);
+      });
+
+      const btn = document.createElement("button");
+      btn.textContent = "Update";
+
+      // Load existing work from Firebase
+      const dbRef = ref(db, "workers/" + worker.id);
       onValue(dbRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          Object.keys(data).forEach(id => {
-            const select = document.getElementById("task_" + id);
-            if (select) select.value = data[id];
-          });
+        if (snapshot.exists()) {
+          select.value = snapshot.val().work || "No work";
         }
       });
-    }
 
-    function saveAll() {
-      workers.forEach(w => {
-        const select = document.getElementById("task_" + w.id);
-        set(ref(db, "EconsaveTPG1/" + w.id), select.value);
+      // Update button click
+      btn.addEventListener("click", () => {
+        set(ref(db, "workers/" + worker.id), {
+          name: worker.name,
+          work: select.value
+        });
+        alert(`${worker.name} → ${select.value} ✅`);
       });
-      alert("✅ All updates saved successfully!");
-    }
 
-    loadData();
+      card.appendChild(info);
+      card.appendChild(select);
+      card.appendChild(btn);
+      workerListDiv.appendChild(card);
+    });
   </script>
 </body>
 </html>
