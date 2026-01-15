@@ -1,230 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Econsave TPG1 Work Tracker</title>
-  <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background: #f7faf7;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #0a5c2c;
-      color: white;
-      text-align: center;
-      padding: 15px;
-      font-size: 1.4em;
-      font-weight: 600;
-    }
-    #workers {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 15px;
-      padding: 20px;
-    }
-    .worker-card {
-      background: white;
-      border-radius: 14px;
-      padding: 15px;
-      box-shadow: 0 3px 7px rgba(0,0,0,0.08);
-    }
-    .worker-card h3 {
-      color: #0a5c2c;
-      margin-bottom: 8px;
-    }
-    .buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }
-    button {
-      border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      color: white;
-      font-weight: 500;
-    }
-    .view-btn { background-color: #0a5c2c; }
-    .update-btn { background-color: #0077cc; }
-
-    /* Modal styling */
-    #modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.4);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      width: 300px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
-    .modal-content select, .modal-content button {
-      width: 100%;
-      margin-top: 10px;
-    }
-    .close {
-      float: right;
-      cursor: pointer;
-      font-size: 1.2em;
-      color: #888;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Spin & Win</title>
+<link rel="stylesheet" href="style.css">
+<script type="module" src="firebase-config.js"></script>
+<script type="module" src="app.js"></script>
 </head>
+
 <body>
-  <header>Econsave TPG1 Work Tracker</header>
-  <div id="workers"></div>
+<div class="login-card">
+  <h2>🎡 Spin & Win</h2>
+  <p>Sign in or create an account to play exciting lottery games and earn coins!</p>
 
-  <!-- Modal -->
-  <div id="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h3 id="modalTitle">Update Task</h3>
-      <select id="taskSelect"></select>
-      <button id="saveBtn">Save</button>
-    </div>
-  </div>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button id="loginBtn">Login</button>
+  <button id="registerBtn">Register</button>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyB6b93A_HeU4FADs3o2Ysw6-dlRRS2TbZk",
-      authDomain: "telegram-miniapp-e8cc0.firebaseapp.com",
-      projectId: "telegram-miniapp-e8cc0",
-      storageBucket: "telegram-miniapp-e8cc0.firebasestorage.app",
-      messagingSenderId: "827930913054",
-      appId: "1:827930913054:web:502b56e0c198d8e9ff410f",
-      databaseURL: "https://telegram-miniapp-e8cc0-default-rtdb.asia-southeast1.firebasedatabase.app/"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    const workers = [
-      "MOHAMMAD MASUD","RAFIUL ISLAM","ALAMIN","MIAH SOHAG","SHARIFUL ISLAM",
-      "SOJEEB MIAH","DELUAR","SAJIB","MIAH RUBEL","MATANG DAH","RANA SOHAL",
-      "BAINATH YADAV","KAMESHWER","RANJIT KUMAR","SANJAY KUMAR","RAI AASH BAHADUR",
-      "SAHAN UPENDRA","SAH TELI SHANKAR PRASAD","RAY TEJNAYAN","AHAMMED MD SAMIM",
-      "MOHAMMED ASHRAFUL","SHEKH MD SAKIB","ISLAM MD AHANARUL","BIJAYA TAMANG",
-      "THAKUR JAY PRAKASH","BOHARA LAXMAN","BHANDARI LIL MAN","BISHWAKARMA BHUPAT RAJ",
-      "BISHOKARMA NOM BAHADUR","BOHARA PREM","YADAV DINESH KUMAR","BK RAJ KUMAR"
-    ];
-
-    const tasks = [
-      "Unloading from container",
-      " loading from BATARAS",
-      " balance ",
-      "susun container ",
-      "Receiving goods",
-      "Picking goods",
-      " helping picking ",
-      "QC checking",
-      "Driving forklift",
-      "MC (Medical leave / sick)",
-      "Store cleaning",
-      "No work"
-    ];
-
-    const listDiv = document.getElementById("workers");
-    const modal = document.getElementById("modal");
-    const taskSelect = document.getElementById("taskSelect");
-    const saveBtn = document.getElementById("saveBtn");
-    const modalTitle = document.getElementById("modalTitle");
-    const closeModal = document.querySelector(".close");
-    let currentWorker = null;
-
-    // Populate dropdown
-    tasks.forEach(task => {
-      const opt = document.createElement("option");
-      opt.value = task;
-      opt.textContent = task;
-      taskSelect.appendChild(opt);
-    });
-
-    // Load data
-    function loadWorkers() {
-      const dbRef = ref(db, "workers/");
-      onValue(dbRef, (snapshot) => {
-        const data = snapshot.val() || {};
-        listDiv.innerHTML = "";
-        workers.forEach(name => {
-          const info = data[name] || {};
-          const card = document.createElement("div");
-          card.className = "worker-card";
-          card.innerHTML = `
-            <h3>${name}</h3>
-            <p><b>Current Task:</b> ${info.currentTask || "Not Assigned"}</p>
-            <p><b>Last Update:</b> ${info.lastUpdate || "N/A"}</p>
-            <div class="buttons">
-              <button class="view-btn" onclick='viewDetails("${name}")'>View Details</button>
-              <button class="update-btn" onclick='openModal("${name}")'>Update</button>
-            </div>
-          `;
-          listDiv.appendChild(card);
-        });
-      });
-    }
-    loadWorkers();
-
-    // Open modal
-    window.openModal = (name) => {
-      currentWorker = name;
-      modal.style.display = "flex";
-      modalTitle.textContent = `Update: ${name}`;
-    };
-
-    closeModal.onclick = () => modal.style.display = "none";
-    window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
-
-    // Save update
-    saveBtn.onclick = async () => {
-      if (!currentWorker) return;
-      const selectedTask = taskSelect.value;
-      const now = new Date();
-      const timestamp = now.toLocaleString();
-      const date = now.toISOString().split("T")[0];
-      const workerRef = ref(db, "workers/" + currentWorker);
-
-      const snapshot = await get(workerRef);
-      const prevData = snapshot.val() || {};
-
-      const newRecords = prevData.records || {};
-      newRecords[date] = selectedTask;
-
-      await set(workerRef, {
-        currentTask: selectedTask,
-        lastUpdate: timestamp,
-        records: newRecords
-      });
-
-      alert(`${currentWorker}'s task updated.`);
-      modal.style.display = "none";
-    };
-
-    // View weekly details
-    window.viewDetails = (name) => {
-      const dbRef = ref(db, "workers/" + name + "/records");
-      onValue(dbRef, (snapshot) => {
-        const data = snapshot.val();
-        if (!data) return alert("No records for this worker yet.");
-        let msg = "";
-        Object.keys(data).slice(-7).forEach(date => {
-          msg += `${date} → ${data[date]}\n`;
-        });
-        alert(`${name}'s Weekly Record:\n\n${msg}`);
-      }, { onlyOnce: true });
-    };
-  </script>
+  <p>Or sign in with</p>
+  <button id="googleBtn">Google Sign-In</button>
+</div>
 </body>
 </html>
