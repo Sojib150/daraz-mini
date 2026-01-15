@@ -1,10 +1,10 @@
-// Firebase configuration
+// firebase-config.js
 export const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyB6b93A_HeU4FADs3o2Ysw6-dlRRS2TbZk",
+  authDomain: "telegram-miniapp-e8cc0.firebaseapp.com",
+  databaseURL: "https://telegram-miniapp-e8cc0-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "telegram-miniapp-e8cc0",
+  storageBucket: "telegram-miniapp-e8cc0.appspot.com",
+  messagingSenderId: "827930913054",
+  appId: "1:827930913054:web:502b56e0c198d8e9ff410f"
 };
