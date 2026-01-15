@@ -1,26 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - Spin & Win</title>
-<link rel="stylesheet" href="style.css">
-<script type="module" src="firebase-config.js"></script>
-<script type="module" src="app.js"></script>
+<title>Login | Spin & Win</title>
+
+<style>
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#1f1c2c,#928dab);
+  font-family:Arial, sans-serif;
+}
+.card{
+  width:320px;
+  background:rgba(255,255,255,0.1);
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+  color:#fff;
+}
+input,button{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border-radius:8px;
+  border:none;
+}
+button{
+  font-weight:bold;
+  cursor:pointer;
+}
+</style>
 </head>
 
 <body>
-<div class="login-card">
+
+<div class="card">
   <h2>🎡 Spin & Win</h2>
-  <p>Sign in or create an account to play exciting lottery games and earn coins!</p>
+  <p>Create account or login</p>
 
   <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button id="loginBtn">Login</button>
-  <button id="registerBtn">Register</button>
+  <input type="password" id="password" placeholder="Password (min 6)">
 
-  <p>Or sign in with</p>
-  <button id="googleBtn">Google Sign-In</button>
+  <button id="registerBtn">Register</button>
+  <button id="loginBtn">Login</button>
+  <button id="googleBtn">Login with Google</button>
+
+  <p id="msg"></p>
 </div>
+
+<!-- IMPORTANT -->
+<script type="module" src="./app.js"></script>
 </body>
 </html>
