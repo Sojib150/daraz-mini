@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - Spin & Win</title>
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<div class="dashboard-card">
+  <h2>🎡 Spin & Win</h2>
+  <p id="welcomeText">Welcome, User!</p>
+  <div class="coin-box" id="coinDisplay">🪙 Coins: 0</div>
+
+  <div id="wheel" class="wheel-container">
+    <div class="center" onclick="spin()">SPIN</div>
+  </div>
+
+  <button class="spin-btn" onclick="spin()">Spin Now</button>
+  <div class="result" id="result"></div>
+
+  <h3>Lottery & Ads Section</h3>
+  <p>Here later you can play different lotteries or watch ads to earn coins!</p>
+</div>
+</body>
+</html>
