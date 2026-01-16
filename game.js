@@ -1,52 +1,69 @@
-let coins = 90;
+let coins = 100;
 
-const coinsEl = document.getElementById("coins");
-const gameArea = document.getElementById("gameArea");
-
-coinsEl.innerText = coins;
+const coinText = document.getElementById("coins");
+const screen = document.getElementById("screen");
 
 function show(html) {
-  gameArea.classList.remove("hidden");
-  gameArea.innerHTML = html;
+  screen.classList.remove("hidden");
+  screen.innerHTML = html;
 }
 
-// 👇 MUST expose to window
-window.playGame = function () {
+function updateCoins() {
+  coinText.innerText = coins;
+}
+
+/* PLAY GAME */
+function playGame() {
   show(`
-    <h3>🎮 Play Game</h3>
-    <button onclick="addCoins(10)">Win 10 Coins</button>
+    <h3>🎮 Simple Game</h3>
+    <p>Click to win coins</p>
+    <button onclick="win(10)">Win 10 Coins</button>
   `);
-};
+}
 
-window.spin = function () {
-  const win = Math.floor(Math.random() * 50) + 1;
-  coins += win;
-  coinsEl.innerText = coins;
+/* SPIN */
+function spin() {
+  const winCoin = Math.floor(Math.random() * 50) + 1;
+  coins += winCoin;
+  updateCoins();
 
-  show(`<h3>🎰 You won ${win} coins!</h3>`);
-};
+  show(`<h3>🎰 You won ${winCoin} coins!</h3>`);
+}
 
-window.watchAds = function () {
+/* WATCH AD */
+function watchAd() {
   show(`
     <h3>📺 Watch Ad</h3>
-    <p>Wait 15 seconds to earn 20 coins</p>
-    <button onclick="addCoins(20)">Finish Ad</button>
+    <p>Wait 15 seconds</p>
+    <button onclick="finishAd()">Finish Ad</button>
   `);
-};
+}
 
-window.daily = function () {
+function finishAd() {
+  coins += 20;
+  updateCoins();
+  show(`<h3>✅ Ad completed! +20 Coins</h3>`);
+}
+
+/* DAILY */
+function daily() {
   coins += 30;
-  coinsEl.innerText = coins;
-  show(`<h3>🎁 Daily Bonus: +30 Coins</h3>`);
-};
+  updateCoins();
+  show(`<h3>🎁 Daily Bonus +30 Coins</h3>`);
+}
 
-window.lottery = function () {
-  const num = Math.floor(1000 + Math.random() * 9000);
-  show(`<h3># Lottery</h3><p>Your Number: <b>${num}</b></p>`);
-};
+/* LOTTERY */
+function lottery() {
+  const number = Math.floor(1000 + Math.random() * 9000);
+  show(`
+    <h3># Lottery</h3>
+    <p>Your Lucky Number:</p>
+    <h2>${number}</h2>
+  `);
+}
 
-window.addCoins = function (n) {
+function win(n) {
   coins += n;
-  coinsEl.innerText = coins;
-  gameArea.innerHTML = `<h3>✅ +${n} coins added</h3>`;
-};
+  updateCoins();
+  show(`<h3>🎉 You earned ${n} coins</h3>`);
+}
