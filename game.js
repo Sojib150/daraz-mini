@@ -1,66 +1,52 @@
-import { auth, db } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { ref, get, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+let coins = 90;
 
-let uid, coins = 0;
+const coinsEl = document.getElementById("coins");
+const gameArea = document.getElementById("gameArea");
 
-onAuthStateChanged(auth, user => {
-  if (!user) location.href = "index.html";
-  uid = user.uid;
-  userEmail.innerText = user.email;
+coinsEl.innerText = coins;
 
-  get(ref(db, "users/" + uid)).then(snap => {
-    coins = snap.val().coins;
-    updateUI();
-  });
-});
-
-function save() {
-  update(ref(db, "users/" + uid), { coins });
-  updateUI();
-}
-
-function updateUI() {
-  document.getElementById("coins").innerText = coins;
-}
-
-window.playGame = () => {
+function show(html) {
   gameArea.classList.remove("hidden");
-  gameArea.innerHTML = `
-    <h3>Simple Game</h3>
-    <button onclick="win(10)">Win 10 Coins</button>
-  `;
+  gameArea.innerHTML = html;
+}
+
+// 👇 MUST expose to window
+window.playGame = function () {
+  show(`
+    <h3>🎮 Play Game</h3>
+    <button onclick="addCoins(10)">Win 10 Coins</button>
+  `);
 };
 
-window.spin = () => {
+window.spin = function () {
   const win = Math.floor(Math.random() * 50) + 1;
   coins += win;
-  alert("You won " + win + " coins");
-  save();
+  coinsEl.innerText = coins;
+
+  show(`<h3>🎰 You won ${win} coins!</h3>`);
 };
 
-window.watchAds = () => {
-  coins += 20; // later ad logic
-  alert("Ad watched! +20 coins");
-  save();
+window.watchAds = function () {
+  show(`
+    <h3>📺 Watch Ad</h3>
+    <p>Wait 15 seconds to earn 20 coins</p>
+    <button onclick="addCoins(20)">Finish Ad</button>
+  `);
 };
 
-window.daily = () => {
-  coins += 50;
-  alert("Daily bonus +50");
-  save();
+window.daily = function () {
+  coins += 30;
+  coinsEl.innerText = coins;
+  show(`<h3>🎁 Daily Bonus: +30 Coins</h3>`);
 };
 
-window.lottery = () => {
-  gameArea.classList.remove("hidden");
-  gameArea.innerHTML = `
-    <h3>Lottery</h3>
-    <p>Your Numbers:</p>
-    <div>${Math.floor(Math.random()*9999)}</div>
-  `;
+window.lottery = function () {
+  const num = Math.floor(1000 + Math.random() * 9000);
+  show(`<h3># Lottery</h3><p>Your Number: <b>${num}</b></p>`);
 };
 
-window.win = (c) => {
-  coins += c;
-  save();
+window.addCoins = function (n) {
+  coins += n;
+  coinsEl.innerText = coins;
+  gameArea.innerHTML = `<h3>✅ +${n} coins added</h3>`;
 };
