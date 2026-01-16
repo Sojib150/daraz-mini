@@ -84,4 +84,74 @@ button.google{
   margin-top:12px;
   font-size:13px;
   color:#6b7280;
+}/* ===== DASHBOARD ===== */
+.game{
+  width:100%;
+  max-width:420px;
+  margin:auto;
+  padding:20px;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#fff;
+  padding:18px;
+  border-radius:16px;
+  box-shadow:0 10px 25px rgba(0,0,0,.1);
+  margin-bottom:20px;
+}
+
+.top h2{
+  margin:0;
+  font-size:18px;
+}
+
+.email{
+  font-size:12px;
+  color:#6b7280;
+}
+
+.coins{
+  font-size:20px;
+  font-weight:700;
+  background:linear-gradient(135deg,#f97316,#f59e0b);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:12px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+.game-card{
+  background:#fff;
+  padding:20px;
+  border-radius:18px;
+  text-align:center;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+  cursor:pointer;
+  transition:.2s;
+}
+
+.game-card:hover{
+  transform:translateY(-3px);
+}
+
+.game-card h3{
+  margin:10px 0 4px;
+  font-size:16px;
+}
+
+.game-card p{
+  font-size:13px;
+  color:#6b7280;
+}
+
+.logout{
+  background:#fee2e2;
 }
