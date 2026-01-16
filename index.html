@@ -1,32 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Mini Coin Game</title>
+  <title>Spin & Win</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="app">
+  <h2>🎰 Spin & Win</h2>
 
-  <div class="top">
-    <div class="user">👤 Player</div>
-    <div class="coin">🪙 <span id="coins">100</span></div>
+  <div class="coins">🪙 Coins: <span id="coins">100</span></div>
+
+  <div class="wheel" id="wheel">
+    <div>0</div>
+    <div>5</div>
+    <div>10</div>
+    <div>20</div>
+    <div>50</div>
+    <div>0</div>
   </div>
 
-  <div class="menu">
-    <button onclick="playGame()">🎮 Play Game</button>
-    <button onclick="spin()">🎰 Spin & Win</button>
-    <button onclick="watchAd()">📺 Watch Ad</button>
-    <button onclick="daily()">🎁 Daily Bonus</button>
-    <button onclick="lottery()"># Lottery</button>
-  </div>
+  <button onclick="spin()">SPIN (-10)</button>
 
-  <div id="screen" class="card hidden"></div>
-
+  <p id="result"></p>
 </div>
 
-<script src="game.js"></script>
+<script src="spin.js"></script>
 </body>
 </html>
