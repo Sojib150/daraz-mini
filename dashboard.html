@@ -1,60 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Daraz Mini Game</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="app">
+<header>
+  <h3 id="userEmail">Player</h3>
+  <div>🪙 <span id="coins">0</span></div>
+</header>
 
-  <!-- Top Bar -->
-  <div class="topbar">
-    <div class="profile">
-      <div class="avatar">👤</div>
-      <div>
-        <div class="welcome">Welcome</div>
-        <div class="email" id="userEmail">loading...</div>
-      </div>
-    </div>
-
-    <div class="coin-box">
-      🪙 <span id="coinCount">90</span>
-    </div>
-  </div>
-
-  <!-- Game Grid -->
-  <div class="menu">
-
-    <div class="menu-card">
-      🎰
-      <h3>Lottery</h3>
-      <p>Spin & win coins</p>
-    </div>
-
-    <div class="menu-card">
-      📺
-      <h3>Watch Ad</h3>
-      <p>Earn free coins</p>
-    </div>
-
-    <div class="menu-card">
-      🎁
-      <h3>Daily Bonus</h3>
-      <p>Claim today</p>
-    </div>
-
-    <div class="menu-card logout">
-      🚪
-      <h3>Logout</h3>
-      <p>Exit game</p>
-    </div>
-
-  </div>
-
+<div class="menu">
+  <button onclick="playGame()">🎮 Play Game</button>
+  <button onclick="spin()">🎰 Spin & Win</button>
+  <button onclick="watchAds()">📺 Watch Ad</button>
+  <button onclick="daily()">🎁 Daily Bonus</button>
+  <button onclick="lottery()"># Lottery</button>
 </div>
 
+<div id="gameArea" class="card hidden"></div>
+
+<script type="module" src="game.js"></script>
 </body>
 </html>
