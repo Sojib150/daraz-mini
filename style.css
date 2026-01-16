@@ -1,69 +1,51 @@
-* {
-  box-sizing: border-box;
-}
-
 body {
   margin: 0;
-  background: #eaeaea;
-  font-family: Arial, sans-serif;
+  background: radial-gradient(circle, #222, #000);
+  font-family: Arial;
+  color: #fff;
+  text-align: center;
 }
 
 .app {
-  max-width: 420px;
+  max-width: 360px;
   margin: auto;
-  background: #fff;
-  min-height: 100vh;
+  padding: 20px;
 }
 
-/* TOP BAR */
-.top {
+.coins {
+  margin: 15px;
+  font-size: 18px;
+}
+
+.wheel {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: 8px solid gold;
+  margin: 20px auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  place-items: center;
   background: #111;
-  color: #fff;
+}
+
+.wheel div {
+  font-size: 18px;
+  color: gold;
+}
+
+button {
   padding: 14px;
-  display: flex;
-  justify-content: space-between;
-  font-size: 15px;
-}
-
-/* MENU */
-.menu {
-  padding: 15px;
-}
-
-.menu button {
   width: 100%;
-  padding: 15px;
-  margin-bottom: 10px;
+  font-size: 16px;
   border: none;
-  border-radius: 10px;
-  font-size: 15px;
-  background: #f1f1f1;
+  border-radius: 8px;
+  background: gold;
+  color: #000;
   cursor: pointer;
 }
 
-.menu button:active {
-  background: #ddd;
-}
-
-/* GAME SCREEN */
-.card {
-  margin: 15px;
-  padding: 15px;
-  background: #fafafa;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.hidden {
-  display: none;
-}
-
-.card button {
-  padding: 12px;
-  width: 100%;
-  margin-top: 10px;
-  border: none;
-  border-radius: 8px;
-  background: #222;
-  color: #fff;
+#result {
+  margin-top: 15px;
+  font-size: 18px;
 }
