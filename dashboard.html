@@ -11,16 +11,22 @@
   <div>🪙 <span id="coins">0</span></div>
 </header>
 
-<div class="menu">
-  <button onclick="playGame()">🎮 Play Game</button>
-  <button onclick="spin()">🎰 Spin & Win</button>
-  <button onclick="watchAds()">📺 Watch Ad</button>
-  <button onclick="daily()">🎁 Daily Bonus</button>
-  <button onclick="lottery()"># Lottery</button>
+<div class="app">
+
+  <header class="top">
+    <div class="email" id="userEmail">Player</div>
+    <div class="coins">🪙 <span id="coins">0</span></div>
+  </header>
+
+  <div class="menu">
+    <button onclick="playGame()">🎮 Play Game</button>
+    <button onclick="spin()">🎰 Spin & Win</button>
+    <button onclick="watchAds()">📺 Watch Ad</button>
+    <button onclick="daily()">🎁 Daily Bonus</button>
+    <button onclick="lottery()"># Lottery</button>
+  </div>
+
+  <div id="gameArea" class="card hidden"></div>
+
 </div>
-
-<div id="gameArea" class="card hidden"></div>
-
-<script type="module" src="game.js"></script>
-</body>
 </html>
