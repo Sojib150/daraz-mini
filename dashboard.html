@@ -8,52 +8,53 @@
 </head>
 <body>
 
-<div class="game">
+<div class="app">
 
-  <!-- Header -->
-  <div class="top">
-    <div>
-      <h2>👋 Welcome</h2>
-      <span class="email" id="userEmail">Loading...</span>
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="profile">
+      <div class="avatar">👤</div>
+      <div>
+        <div class="welcome">Welcome</div>
+        <div class="email" id="userEmail">loading...</div>
+      </div>
     </div>
-    <div class="coins">
-      💰 <span id="coinCount">0</span>
+
+    <div class="coin-box">
+      🪙 <span id="coinCount">90</span>
     </div>
   </div>
 
-  <!-- Game Cards -->
-  <div class="grid">
+  <!-- Game Grid -->
+  <div class="menu">
 
-    <div class="game-card" onclick="playLottery()">
+    <div class="menu-card">
       🎰
       <h3>Lottery</h3>
-      <p>Spin & Win Coins</p>
+      <p>Spin & win coins</p>
     </div>
 
-    <div class="game-card" onclick="watchAd()">
+    <div class="menu-card">
       📺
       <h3>Watch Ad</h3>
-      <p>Earn Free Coins</p>
+      <p>Earn free coins</p>
     </div>
 
-    <div class="game-card" onclick="dailyBonus()">
+    <div class="menu-card">
       🎁
       <h3>Daily Bonus</h3>
-      <p>Claim Today</p>
+      <p>Claim today</p>
     </div>
 
-    <div class="game-card logout" onclick="logout()">
+    <div class="menu-card logout">
       🚪
       <h3>Logout</h3>
-      <p>Exit Game</p>
+      <p>Exit game</p>
     </div>
 
   </div>
 
 </div>
-
-<script type="module" src="firebase-config.js"></script>
-<script type="module" src="game.js"></script>
 
 </body>
 </html>
