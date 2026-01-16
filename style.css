@@ -1,91 +1,70 @@
-body {
+*{
   margin:0;
   padding:0;
+  box-sizing:border-box;
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg,#1f1c2c,#928dab);
-  display:flex;
-  justify-content:center;
-  align-items:center;
+}
+
+body{
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
   min-height:100vh;
-}
-
-.login-card, .home-card, .dashboard-card {
-  width:360px;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(15px);
-  border-radius:25px;
-  padding:20px;
-  text-align:center;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-  color:#fff;
-  margin:10px;
-}
-
-input[type=email], input[type=password] {
-  width:90%;
-  padding:12px;
-  margin:10px 0;
-  border-radius:10px;
-  border:none;
-  font-size:16px;
-}
-
-button {
-  width:90%;
-  padding:12px;
-  margin:10px 0;
-  font-size:16px;
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-/* Wheel Styles */
-.wheel-container{
-  width:260px;
-  height:260px;
-  border-radius:50%;
-  margin:20px auto;
-  position:relative;
-  background: conic-gradient(
-    #f44336 0deg 72deg,
-    #ffeb3b 72deg 144deg,
-    #4caf50 144deg 216deg,
-    #2196f3 216deg 288deg,
-    #9c27b0 288deg 360deg
-  );
-  box-shadow: 0 10px 25px rgba(0,0,0,0.7), inset 0 0 30px rgba(255,255,255,0.2);
-  transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.center{
-  position:absolute;
-  width:90px;
-  height:90px;
-  background: radial-gradient(circle,#fff,#ddd);
-  border-radius:50%;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
   display:flex;
-  align-items:center;
   justify-content:center;
-  font-weight:700;
-  font-size:22px;
-  color:#333;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+  align-items:center;
+  color:#fff;
+}
+
+.card{
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  border-radius:20px;
+  padding:30px;
+  width:100%;
+  max-width:380px;
+  box-shadow:0 0 40px rgba(0,0,0,0.4);
+}
+
+.card h1{
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.card p{
+  text-align:center;
+  font-size:14px;
+  opacity:.8;
+  margin-bottom:20px;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border:none;
+  border-radius:10px;
+  outline:none;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:10px;
+  background:#ff9800;
+  color:#000;
+  font-weight:bold;
   cursor:pointer;
 }
 
-.coin-box{
-  font-size:20px;
-  font-weight:600;
-  margin:15px 0;
+button.google{
+  background:#fff;
+  color:#000;
 }
 
-.result{
-  font-size:18px;
-  min-height:24px;
-  font-weight:600;
+.small{
+  text-align:center;
+  margin-top:10px;
+  font-size:13px;
+  opacity:.8;
 }
