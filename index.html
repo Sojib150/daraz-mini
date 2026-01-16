@@ -1,20 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Game Login</title>
+  <meta charset="UTF-8">
+  <title>Mini Coin Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="center">
+<body>
 
-  <div class="card">
-    <h2>🎮 Game Login</h2>
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
+<div class="app">
 
-    <button onclick="login()">Login</button>
-    <button onclick="register()">Register</button>
+  <div class="top">
+    <div class="user">👤 Player</div>
+    <div class="coin">🪙 <span id="coins">100</span></div>
   </div>
 
-<script type="module" src="auth.js"></script>
+  <div class="menu">
+    <button onclick="playGame()">🎮 Play Game</button>
+    <button onclick="spin()">🎰 Spin & Win</button>
+    <button onclick="watchAd()">📺 Watch Ad</button>
+    <button onclick="daily()">🎁 Daily Bonus</button>
+    <button onclick="lottery()"># Lottery</button>
+  </div>
+
+  <div id="screen" class="card hidden"></div>
+
+</div>
+
+<script src="game.js"></script>
 </body>
 </html>
