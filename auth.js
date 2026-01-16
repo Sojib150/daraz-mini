@@ -1,42 +1,34 @@
-const auth = firebase.auth();
+import { auth, provider } from "./firebase.js";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// Signup
-function signup() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+window.signup = () => {
+  createUserWithEmailAndPassword(
+    auth,
+    email.value,
+    password.value
+  ).then(()=>{
+    location.href="dashboard.html";
+  }).catch(e=>alert(e.message));
+};
 
-  auth.createUserWithEmailAndPassword(email, password)
-    .then(() => {
-      alert("Account created!");
-      window.location.href = "home.html";
+window.login = () => {
+  signInWithEmailAndPassword(
+    auth,
+    email.value,
+    password.value
+  ).then(()=>{
+    location.href="dashboard.html";
+  }).catch(e=>alert(e.message));
+};
+
+window.googleLogin = () => {
+  signInWithPopup(auth, provider)
+    .then(()=>{
+      location.href="dashboard.html";
     })
-    .catch(error => {
-      alert(error.message);
-    });
-}
-
-// Login
-function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  auth.signInWithEmailAndPassword(email, password)
-    .then(() => {
-      window.location.href = "home.html";
-    })
-    .catch(error => {
-      alert(error.message);
-    });
-}
-
-// Google Login
-function googleLogin() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider)
-    .then(() => {
-      window.location.href = "home.html";
-    })
-    .catch(error => {
-      alert(error.message);
-    });
-}
+    .catch(e=>alert(e.message));
+};
