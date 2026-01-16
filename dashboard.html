@@ -1,22 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-  <h3 id="userEmail">Player</h3>
-  <div>🪙 <span id="coins">0</span></div>
-</header>
-
 <div class="app">
 
-  <header class="top">
-    <div class="email" id="userEmail">Player</div>
-    <div class="coins">🪙 <span id="coins">0</span></div>
-  </header>
+  <div class="top">
+    <div id="userEmail">Loading...</div>
+    <div>🪙 <span id="coins">0</span></div>
+  </div>
 
   <div class="menu">
     <button onclick="playGame()">🎮 Play Game</button>
@@ -29,4 +25,9 @@
   <div id="gameArea" class="card hidden"></div>
 
 </div>
+
+<!-- ⚠️ IMPORTANT -->
+<script src="game.js"></script>
+
+</body>
 </html>
