@@ -1,4 +1,4 @@
-import { auth, provider } from "./firebase.js";
+import { auth, provider } from "./firebase-config.js";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -6,29 +6,19 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 window.signup = () => {
-  createUserWithEmailAndPassword(
-    auth,
-    email.value,
-    password.value
-  ).then(()=>{
-    location.href="dashboard.html";
-  }).catch(e=>alert(e.message));
+  createUserWithEmailAndPassword(auth, email.value, password.value)
+    .then(() => location.href = "dashboard.html")
+    .catch(e => alert(e.message));
 };
 
 window.login = () => {
-  signInWithEmailAndPassword(
-    auth,
-    email.value,
-    password.value
-  ).then(()=>{
-    location.href="dashboard.html";
-  }).catch(e=>alert(e.message));
+  signInWithEmailAndPassword(auth, email.value, password.value)
+    .then(() => location.href = "dashboard.html")
+    .catch(e => alert(e.message));
 };
 
 window.googleLogin = () => {
   signInWithPopup(auth, provider)
-    .then(()=>{
-      location.href="dashboard.html";
-    })
-    .catch(e=>alert(e.message));
+    .then(() => location.href = "dashboard.html")
+    .catch(e => alert(e.message));
 };
