@@ -2,142 +2,130 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Spin & Win</title>
+<title>Bubble Shooter</title>
 
 <style>
 body{
   margin:0;
-  background:#000;
-  color:#fff;
-  font-family:sans-serif;
+  background:#0b1d3a;
   overflow:hidden;
+  touch-action: none;
 }
 
-#top{
-  text-align:center;
-  padding:15px;
-  font-size:22px;
-  color:gold;
-}
-
-#machine{
-  display:flex;
-  justify-content:center;
-  margin-top:20px;
-}
-
-.reel-box{
-  width:90px;
-  height:300px;
-  margin:5px;
-  border-radius:15px;
-  background:#111;
-  overflow:hidden;
-  border:3px solid gold;
-}
-
-.reel{
-  font-size:60px;
-  text-align:center;
-}
-
-.symbol{
-  height:100px;
-  line-height:100px;
-}
-
-#spinBtn{
-  position:fixed;
-  bottom:30px;
-  left:50%;
-  transform:translateX(-50%);
-  padding:18px 80px;
-  font-size:24px;
-  background:gold;
-  border:none;
-  border-radius:50px;
-  font-weight:bold;
-}
-
-#popup{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.8);
-  display:none;
-  align-items:center;
-  justify-content:center;
-}
-
-#popup div{
-  background:#111;
-  padding:30px;
-  border-radius:20px;
-  border:2px solid gold;
-  text-align:center;
+canvas{
+  display:block;
+  margin:auto;
+  background:linear-gradient(#1b3b6f,#0b1d3a);
 }
 </style>
 </head>
 
 <body>
 
-<div id="top">🎰 SPIN & WIN 🎰</div>
-
-<div id="machine">
-  <div class="reel-box"><div class="reel" id="r1"></div></div>
-  <div class="reel-box"><div class="reel" id="r2"></div></div>
-  <div class="reel-box"><div class="reel" id="r3"></div></div>
-</div>
-
-<button id="spinBtn" onclick="spin()">SPIN</button>
-
-<div id="popup">
-  <div>
-    <h2>🎉 BONUS WIN 🎉</h2>
-    <p>YOU GOT REWARD</p>
-    <button onclick="popup.style.display='none'">OK</button>
-  </div>
-</div>
+<canvas id="game" width="360" height="640"></canvas>
 
 <script>
-let symbols = ["🍋","🍒","⭐","💎","🔔","🍉","7️⃣"];
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-function buildReel(el){
-  el.innerHTML="";
-  for(let i=0;i<30;i++){
-    let s = symbols[Math.floor(Math.random()*symbols.length)];
-    el.innerHTML += `<div class="symbol">${s}</div>`;
+const W = canvas.width;
+const H = canvas.height;
+
+const colors = ["red","yellow","cyan","lime","orange","violet"];
+
+let bubbles = [];
+let shooter = { x: W/2, y: H-40, r: 14, color: randColor() };
+let flying = null;
+
+function randColor(){
+  return colors[Math.floor(Math.random()*colors.length)];
+}
+
+// create top bubbles
+for(let y=40;y<200;y+=30){
+  for(let x=40;x<W;x+=40){
+    bubbles.push({x,y,r:14,color:randColor()});
   }
 }
 
-let r1 = document.getElementById("r1");
-let r2 = document.getElementById("r2");
-let r3 = document.getElementById("r3");
+canvas.addEventListener("touchstart", shoot);
+canvas.addEventListener("mousedown", shoot);
 
-buildReel(r1);
-buildReel(r2);
-buildReel(r3);
+function shoot(e){
+  if(flying) return;
 
-function spin(){
-  spinReel(r1, 2000);
-  spinReel(r2, 2500);
-  spinReel(r3, 3000);
+  let rect = canvas.getBoundingClientRect();
+  let tx = (e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+  let ty = (e.touches?e.touches[0].clientY:e.clientY)-rect.top;
+
+  let dx = tx - shooter.x;
+  let dy = ty - shooter.y;
+  let len = Math.hypot(dx,dy);
+
+  flying = {
+    x: shooter.x,
+    y: shooter.y,
+    vx: dx/len*6,
+    vy: dy/len*6,
+    r:14,
+    color:shooter.color
+  };
+
+  shooter.color = randColor();
 }
 
-function spinReel(reel, time){
-  reel.style.transition="none";
-  reel.style.transform="translateY(0)";
-  buildReel(reel);
+function update(){
+  if(flying){
+    flying.x += flying.vx;
+    flying.y += flying.vy;
 
-  setTimeout(()=>{
-    let stop = Math.floor(Math.random()*20)*100;
-    reel.style.transition="transform 1s ease-out";
-    reel.style.transform = `translateY(-${stop}px)`;
-  },50);
+    if(flying.x<14 || flying.x>W-14) flying.vx*=-1;
 
-  setTimeout(()=>{
-    popup.style.display="flex";
-  },3000);
+    for(let b of bubbles){
+      let d = Math.hypot(flying.x-b.x, flying.y-b.y);
+      if(d < 28){
+        bubbles.push({x:flying.x,y:flying.y,r:14,color:flying.color});
+        flying = null;
+        break;
+      }
+    }
+
+    if(flying && flying.y < 30){
+      bubbles.push({x:flying.x,y:flying.y,r:14,color:flying.color});
+      flying=null;
+    }
+  }
 }
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+
+  for(let b of bubbles){
+    ctx.beginPath();
+    ctx.fillStyle=b.color;
+    ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
+    ctx.fill();
+  }
+
+  if(flying){
+    ctx.beginPath();
+    ctx.fillStyle=flying.color;
+    ctx.arc(flying.x,flying.y,flying.r,0,Math.PI*2);
+    ctx.fill();
+  }
+
+  ctx.beginPath();
+  ctx.fillStyle=shooter.color;
+  ctx.arc(shooter.x,shooter.y,shooter.r,0,Math.PI*2);
+  ctx.fill();
+}
+
+function loop(){
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+loop();
 </script>
 
 </body>
