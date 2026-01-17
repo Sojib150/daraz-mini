@@ -1,31 +1,72 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Spin & Win</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Spin & Win</title>
+<style>
+body {
+  background:#0b1c2d;
+  color:white;
+  text-align:center;
+  font-family:sans-serif;
+}
+.slot {
+  font-size:60px;
+  margin:10px;
+}
+button {
+  padding:15px 40px;
+  font-size:20px;
+  background:gold;
+  border:none;
+  border-radius:10px;
+}
+</style>
 </head>
 <body>
 
-<div class="app">
-  <h2>🎰 Spin & Win</h2>
+<h1>🎰 Spin & Win 🎰</h1>
+<h2>Coins: <span id="coins">1000</span></h2>
 
-  <div class="coins">🪙 Coins: <span id="coins">100</span></div>
+<div class="slot" id="s1">🍒</div>
+<div class="slot" id="s2">🍋</div>
+<div class="slot" id="s3">🍊</div>
 
-  <div class="wheel" id="wheel">
-    <div>0</div>
-    <div>5</div>
-    <div>10</div>
-    <div>20</div>
-    <div>50</div>
-    <div>0</div>
-  </div>
+<br><br>
+<button onclick="spin()">SPIN</button>
 
-  <button onclick="spin()">SPIN (-10)</button>
+<h2 id="result"></h2>
 
-  <p id="result"></p>
-</div>
+<script>
+let coins = 1000;
+let symbols = ["🍒","🍋","🍊","⭐","💎"];
 
-<script src="spin.js"></script>
+function spin(){
+  if(coins < 50){
+    document.getElementById("result").innerText="No coins!";
+    return;
+  }
+
+  coins -= 50;
+
+  let a = symbols[Math.floor(Math.random()*symbols.length)];
+  let b = symbols[Math.floor(Math.random()*symbols.length)];
+  let c = symbols[Math.floor(Math.random()*symbols.length)];
+
+  s1.innerText = a;
+  s2.innerText = b;
+  s3.innerText = c;
+
+  if(a==b && b==c){
+    coins += 300;
+    result.innerText = "🎉 YOU WIN!";
+  } else {
+    result.innerText = "😅 Try Again";
+  }
+
+  document.getElementById("coins").innerText = coins;
+}
+</script>
+
 </body>
 </html>
