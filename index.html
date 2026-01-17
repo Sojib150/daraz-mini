@@ -1,185 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Spin & Win Casino</title>
+<title>Spin & Win</title>
 
 <style>
 body{
   margin:0;
-  background:radial-gradient(circle at top,#14304a,#000);
-  font-family:Arial;
-  text-align:center;
-  color:white;
-}
-
-h1{
-  color:gold;
-  text-shadow:0 0 10px gold;
-  margin:15px 0;
-}
-
-#coinsBox{
-  display:inline-block;
-  padding:10px 25px;
-  border:2px solid gold;
-  border-radius:30px;
-  background:#111;
-  font-size:18px;
-}
-
-.machine{
-  margin:30px auto;
-  padding:20px;
-  width:320px;
-  background:linear-gradient(#d4af37,#7a5c00);
-  border-radius:25px;
-  box-shadow:0 0 30px gold;
-}
-
-.reels{
-  display:flex;
-  justify-content:space-between;
   background:#000;
+  color:#fff;
+  font-family:sans-serif;
+  overflow:hidden;
+}
+
+#top{
+  text-align:center;
   padding:15px;
+  font-size:22px;
+  color:gold;
+}
+
+#machine{
+  display:flex;
+  justify-content:center;
+  margin-top:20px;
+}
+
+.reel-box{
+  width:90px;
+  height:300px;
+  margin:5px;
   border-radius:15px;
+  background:#111;
+  overflow:hidden;
+  border:3px solid gold;
 }
 
 .reel{
-  width:80px;
-  height:120px;
-  overflow:hidden;
-  border-radius:10px;
-  background:#111;
-  border:2px solid #333;
+  font-size:60px;
+  text-align:center;
 }
 
-.reel img{
-  width:100%;
-  display:block;
+.symbol{
+  height:100px;
+  line-height:100px;
 }
 
-.spin-btn{
-  margin-top:20px;
-  padding:15px 60px;
-  font-size:22px;
+#spinBtn{
+  position:fixed;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:18px 80px;
+  font-size:24px;
+  background:gold;
   border:none;
-  border-radius:40px;
-  background:linear-gradient(#ffd700,#ff8c00);
-  box-shadow:0 0 15px gold;
+  border-radius:50px;
   font-weight:bold;
-}
-
-.spin-btn:active{
-  transform:scale(0.95);
 }
 
 #popup{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.7);
+  background:rgba(0,0,0,.8);
   display:none;
   align-items:center;
   justify-content:center;
 }
 
-.popup-box{
+#popup div{
   background:#111;
   padding:30px;
   border-radius:20px;
   border:2px solid gold;
-  box-shadow:0 0 20px gold;
+  text-align:center;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🎰 SPIN & WIN 🎰</h1>
+<div id="top">🎰 SPIN & WIN 🎰</div>
 
-<div id="coinsBox">🪙 Coins: <span id="coins">1000</span></div>
-
-<div class="machine">
-  <div class="reels">
-    <div class="reel"><img id="r1"></div>
-    <div class="reel"><img id="r2"></div>
-    <div class="reel"><img id="r3"></div>
-  </div>
-
-  <button class="spin-btn" onclick="spin()">SPIN</button>
+<div id="machine">
+  <div class="reel-box"><div class="reel" id="r1"></div></div>
+  <div class="reel-box"><div class="reel" id="r2"></div></div>
+  <div class="reel-box"><div class="reel" id="r3"></div></div>
 </div>
+
+<button id="spinBtn" onclick="spin()">SPIN</button>
 
 <div id="popup">
-  <div class="popup-box">
-    <h2>🎉 BIG WIN 🎉</h2>
-    <p>+300 Coins</p>
-    <button onclick="closePopup()">OK</button>
+  <div>
+    <h2>🎉 BONUS WIN 🎉</h2>
+    <p>YOU GOT REWARD</p>
+    <button onclick="popup.style.display='none'">OK</button>
   </div>
 </div>
 
-<!-- Sounds -->
-<audio id="spinSound" src="https://assets.mixkit.co/sfx/preview/mixkit-slot-machine-spin-1930.mp3"></audio>
-<audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
-
 <script>
-let coins = 1000;
+let symbols = ["🍋","🍒","⭐","💎","🔔","🍉","7️⃣"];
 
-let images = [
-  "https://i.imgur.com/8Qf6G5k.png", // 🍋
-  "https://i.imgur.com/7yUvePI.png", // 🍒
-  "https://i.imgur.com/GXzeu5X.png", // ⭐
-  "https://i.imgur.com/9n6NwQy.png", // 💎
-  "https://i.imgur.com/l5vX0Hb.png"  // 🔔
-];
+function buildReel(el){
+  el.innerHTML="";
+  for(let i=0;i<30;i++){
+    let s = symbols[Math.floor(Math.random()*symbols.length)];
+    el.innerHTML += `<div class="symbol">${s}</div>`;
+  }
+}
 
 let r1 = document.getElementById("r1");
 let r2 = document.getElementById("r2");
 let r3 = document.getElementById("r3");
 
-r1.src = r2.src = r3.src = images[0];
+buildReel(r1);
+buildReel(r2);
+buildReel(r3);
 
 function spin(){
-  if(coins < 50) return;
-
-  coins -= 50;
-  document.getElementById("coins").innerText = coins;
-
-  document.getElementById("spinSound").play();
-
-  let i1 = Math.floor(Math.random()*images.length);
-  let i2 = Math.floor(Math.random()*images.length);
-  let i3 = Math.floor(Math.random()*images.length);
-
-  animate(r1, images[i1]);
-  animate(r2, images[i2], 150);
-  animate(r3, images[i3], 300);
-
-  setTimeout(()=>{
-    if(i1===i2 && i2===i3){
-      coins += 300;
-      document.getElementById("coins").innerText = coins;
-      document.getElementById("winSound").play();
-      document.getElementById("popup").style.display="flex";
-    }
-  },800);
+  spinReel(r1, 2000);
+  spinReel(r2, 2500);
+  spinReel(r3, 3000);
 }
 
-function animate(el, finalImg, delay=0){
-  setTimeout(()=>{
-    let count = 0;
-    let anim = setInterval(()=>{
-      el.src = images[Math.floor(Math.random()*images.length)];
-      count++;
-      if(count>15){
-        clearInterval(anim);
-        el.src = finalImg;
-      }
-    },60);
-  },delay);
-}
+function spinReel(reel, time){
+  reel.style.transition="none";
+  reel.style.transform="translateY(0)";
+  buildReel(reel);
 
-function closePopup(){
-  document.getElementById("popup").style.display="none";
+  setTimeout(()=>{
+    let stop = Math.floor(Math.random()*20)*100;
+    reel.style.transition="transform 1s ease-out";
+    reel.style.transform = `translateY(-${stop}px)`;
+  },50);
+
+  setTimeout(()=>{
+    popup.style.display="flex";
+  },3000);
 }
 </script>
 
