@@ -15,6 +15,15 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 /* ======================
+   SIDEBAR PANEL SWITCH
+====================== */
+function showPanel(panelId) {
+  const panels = document.querySelectorAll(".panel");
+  panels.forEach(p => p.style.display = "none");
+  document.getElementById(panelId).style.display = "block";
+}
+
+/* ======================
    AUTH + PROFILE
 ====================== */
 function signup() {
@@ -64,17 +73,17 @@ function loadProfile() {
     const data = doc.data();
     document.getElementById("profileName").innerText = data.name;
     document.getElementById("profileImage").src = data.profilePic || "https://via.placeholder.com/50";
-    document.getElementById("onlineStatus").style.background = data.online ? "green":"red";
+    document.getElementById("onlineStatus").style.background = data.online ? "green" : "red";
   });
 }
 
 /* ======================
-   POST + LIKE + COMMENT
+   POST + FEED + LIKE + COMMENT
 ====================== */
 function addPost() {
   const text = document.getElementById("postText").value;
   const user = auth.currentUser;
-  if (!text) return alert("Write something!");
+  if(!text) return alert("Write something!");
 
   db.collection("posts").add({
     text: text,
@@ -82,7 +91,7 @@ function addPost() {
     userEmail: user.email,
     likes: [],
     time: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(() => document.getElementById("postText").value = "");
+  }).then(() => document.getElementById("postText").value="");
 }
 
 function toggleLike(postId, likeBtn) {
@@ -91,8 +100,8 @@ function toggleLike(postId, likeBtn) {
 
   postRef.get().then(doc => {
     const likes = doc.data().likes || [];
-    if (likes.includes(userId)) {
-      postRef.update({ likes: likes.filter(id => id!==userId) });
+    if(likes.includes(userId)){
+      postRef.update({ likes: likes.filter(id=>id!==userId) });
       likeBtn.classList.remove("liked");
     } else {
       likes.push(userId);
@@ -143,7 +152,7 @@ function loadFriendRequests() {
     });
 }
 
-function acceptFriend(requestId, friendId){
+function acceptFriend(requestId, friendId) {
   const user = auth.currentUser;
   db.collection("friendRequests").doc(requestId).update({ status:"accepted" });
   db.collection("users").doc(user.uid).collection("friends").doc(friendId).set({ friendId });
@@ -170,10 +179,10 @@ function loadFriends() {
    PRIVATE CHAT
 ====================== */
 function loadChat(friendId){
-  const userId=auth.currentUser.uid;
-  const chatId=[userId,friendId].sort().join("_");
-  const chatDiv=document.getElementById("chatMessages");
-  chatDiv.innerHTML="";
+  const userId = auth.currentUser.uid;
+  const chatId = [userId,friendId].sort().join("_");
+  const chatDiv = document.getElementById("chatMessages");
+  chatDiv.innerHTML = "";
   db.collection("chats").doc(chatId).collection("messages")
     .orderBy("time")
     .onSnapshot(snapshot=>{
@@ -184,12 +193,13 @@ function loadChat(friendId){
         p.innerHTML=`<b>${msg.senderId}:</b> ${msg.text}`;
         chatDiv.appendChild(p);
       });
+      chatDiv.scrollTop = chatDiv.scrollHeight;
     });
 }
 
-function sendMessage(){
-  const userId=auth.currentUser.uid;
-  const friendId=document.getElementById("chatFriendSelect").value;
+function sendMessage() {
+  const userId = auth.currentUser.uid;
+  const friendId = document.getElementById("chatFriendSelect").value;
   if(!friendId) return alert("Select a friend first!");
   const chatId=[userId,friendId].sort().join("_");
   const text=document.getElementById("chatInput").value;
@@ -202,10 +212,10 @@ function sendMessage(){
 }
 
 /* ======================
-   LOAD POSTS + FRIENDS + PROFILE
+   LOAD POSTS + PROFILE + FRIENDS
 ====================== */
-function loadPosts(){
-  const feed=document.getElementById("feed");
+function loadPosts() {
+  const feed = document.getElementById("feed");
   if(!feed) return;
 
   db.collection("posts")
@@ -217,7 +227,7 @@ function loadPosts(){
         const postId=doc.id;
         const div=document.createElement("div");
         div.className="post";
-        const likesCount=data.likes?data.likes.length:0;
+        const likesCount = data.likes ? data.likes.length : 0;
 
         div.innerHTML=`
           <b>${data.userEmail}</b>
@@ -232,14 +242,15 @@ function loadPosts(){
         `;
         feed.appendChild(div);
 
+        // load comments
         db.collection("comments").doc(postId).collection("commentList")
           .orderBy("time")
           .onSnapshot(commentSnap=>{
             const commentsDiv=document.getElementById(`comments-${postId}`);
             commentsDiv.innerHTML="";
             commentSnap.forEach(cDoc=>{
-              const cData=cDoc.data();
-              const p=document.createElement("p");
+              const cData = cDoc.data();
+              const p = document.createElement("p");
               p.innerHTML=`<b>${cData.userEmail}:</b> ${cData.text}`;
               commentsDiv.appendChild(p);
             });
@@ -248,11 +259,14 @@ function loadPosts(){
     });
 }
 
+/* ======================
+   AUTH STATE CHANGE
+====================== */
 auth.onAuthStateChanged(user=>{
   if(user){
     loadPosts();
-    loadFriendRequests();
-    loadFriends();
     loadProfile();
+    loadFriends();
+    loadFriendRequests();
   }
 });
