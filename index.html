@@ -5,23 +5,55 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="login-container">
+    <h2>Mini Facebook Login</h2>
+    <input type="email" id="email" placeholder="Email"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button onclick="login()">Login</button>
+    <button onclick="signup()">Signup</button>
+  </div>
 
-<div class="header">
-  <h2>Mini Facebook</h2>
-</div>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6b93A_HeU4FADs3o2Ysw6-dlRRS2TbZk",
+      authDomain: "telegram-miniapp-e8cc0.firebaseapp.com",
+      databaseURL: "https://telegram-miniapp-e8cc0-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "telegram-miniapp-e8cc0",
+      storageBucket: "telegram-miniapp-e8cc0.appspot.com",
+      messagingSenderId: "827930913054",
+      appId: "1:827930913054:web:502b56e0c198d8e9ff410f"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-<div class="auth-box">
-  <input type="text" id="name" placeholder="Full Name">
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <input type="text" id="profilePic" placeholder="Profile Pic URL (optional)">
-  <button onclick="signup()">Sign Up</button>
-  <button onclick="login()">Login</button>
-</div>
+    function login(){
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      auth.signInWithEmailAndPassword(email,password)
+        .then(()=> window.location="feed.html")
+        .catch(err=> alert(err.message));
+    }
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="app.js"></script>
+    function signup(){
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      auth.createUserWithEmailAndPassword(email,password)
+        .then(userCred=>{
+          const uid = userCred.user.uid;
+          db.collection("users").doc(uid).set({
+            name: email,
+            bio:"",
+            profilePic:"",
+            coverPhoto:""
+          }).then(()=> window.location="feed.html");
+        })
+        .catch(err=> alert(err.message));
+    }
+  </script>
 </body>
 </html>
