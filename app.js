@@ -60,3 +60,48 @@ function logout() {
     window.location.href = "index.html";
   });
 }
+/* ======================
+   POST SYSTEM
+====================== */
+
+function addPost() {
+  const text = document.getElementById("postText").value;
+  const user = auth.currentUser;
+
+  if (!text) return alert("কিছু লিখো বস 😄");
+
+  db.collection("posts").add({
+    text: text,
+    userEmail: user.email,
+    time: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    document.getElementById("postText").value = "";
+    loadPosts();
+  });
+}
+
+function loadPosts() {
+  const feed = document.getElementById("feed");
+  if (!feed) return;
+
+  feed.innerHTML = "";
+
+  db.collection("posts")
+    .orderBy("time", "desc")
+    .onSnapshot(snapshot => {
+      feed.innerHTML = "";
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.className = "post";
+        div.innerHTML = `<b>${data.userEmail}</b><p>${data.text}</p>`;
+        feed.appendChild(div);
+      });
+    });
+}
+
+auth.onAuthStateChanged(user => {
+  if (user) {
+    loadPosts();
+  }
+});
