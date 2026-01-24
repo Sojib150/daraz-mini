@@ -34,7 +34,6 @@ auth.onAuthStateChanged(user => {
     loadChatFriends();
     loadMyProfile();
   } else {
-    // Redirect to login page or show login
     window.location = "login.html";
   }
 });
@@ -42,17 +41,14 @@ auth.onAuthStateChanged(user => {
 // ----------------------
 // Logout
 // ----------------------
-function logout(){
-  auth.signOut();
-}
+function logout(){ auth.signOut(); }
 
 // ----------------------
 // Show Panel
 // ----------------------
 function showPanel(panelId){
-  const panels = document.querySelectorAll(".panel");
-  panels.forEach(p => p.style.display = "none");
-  document.getElementById(panelId).style.display = "block";
+  document.querySelectorAll(".panel").forEach(p=>p.style.display="none");
+  document.getElementById(panelId).style.display="block";
 }
 
 // ----------------------
@@ -61,13 +57,11 @@ function showPanel(panelId){
 function uploadProfilePic(event){
   const file = event.target.files[0];
   const ref = storage.ref(`profilePics/${currentUser.uid}`);
-  ref.put(file).then(() => {
-    ref.getDownloadURL().then(url => {
-      db.collection("users").doc(currentUser.uid).set({profilePic:url},{merge:true});
-      document.getElementById("profileImage").src = url;
-      document.getElementById("myProfilePic").src = url;
-    });
-  });
+  ref.put(file).then(()=> ref.getDownloadURL().then(url=>{
+    db.collection("users").doc(currentUser.uid).set({profilePic:url},{merge:true});
+    document.getElementById("profileImage").src = url;
+    document.getElementById("myProfilePic").src = url;
+  }));
 }
 
 // ----------------------
@@ -76,19 +70,17 @@ function uploadProfilePic(event){
 function uploadCoverPhoto(event){
   const file = event.target.files[0];
   const ref = storage.ref(`coverPhotos/${currentUser.uid}`);
-  ref.put(file).then(() => {
-    ref.getDownloadURL().then(url => {
-      db.collection("users").doc(currentUser.uid).set({coverPhoto:url},{merge:true});
-      document.getElementById("myCover").src = url;
-    });
-  });
+  ref.put(file).then(()=> ref.getDownloadURL().then(url=>{
+    db.collection("users").doc(currentUser.uid).set({coverPhoto:url},{merge:true});
+    document.getElementById("myCover").src = url;
+  }));
 }
 
 // ----------------------
 // Load User Data
 // ----------------------
 function loadUserData(){
-  db.collection("users").doc(currentUser.uid).get().then(doc => {
+  db.collection("users").doc(currentUser.uid).get().then(doc=>{
     if(doc.exists){
       const data = doc.data();
       document.getElementById("profileName").innerText = data.name || currentUser.email;
@@ -99,7 +91,6 @@ function loadUserData(){
       document.getElementById("myBio").innerText = data.bio || "";
       document.getElementById("myCover").src = data.coverPhoto || "cover-default.jpg";
     } else {
-      // New user, create doc
       db.collection("users").doc(currentUser.uid).set({
         name: currentUser.email,
         bio:"",
@@ -114,14 +105,23 @@ function loadUserData(){
 // Add Post
 // ----------------------
 function addPost(){
-  const text = document.getElementById("postText").value;
-  if(text.trim() === "") return;
-  db.collection("posts").add({
-    text:text,
-    userId: currentUser.uid,
-    time: firebase.firestore.FieldValue.serverTimestamp()
+  const text = document.getElementById("postText").value.trim();
+  if(text==="") return;
+
+  // Get user data first
+  db.collection("users").doc(currentUser.uid).get().then(doc=>{
+    const user = doc.data();
+    db.collection("posts").add({
+      text,
+      userId: currentUser.uid,
+      name: user.name || currentUser.email,
+      profilePic: user.profilePic || "",
+      likes: [],
+      comments: [],
+      time: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    document.getElementById("postText").value = "";
   });
-  document.getElementById("postText").value = "";
 }
 
 // ----------------------
@@ -129,26 +129,76 @@ function addPost(){
 // ----------------------
 function loadFeed(){
   const feedDiv = document.getElementById("feed");
-  db.collection("posts").orderBy("time","desc")
-    .onSnapshot(snapshot => {
-      feedDiv.innerHTML = "";
-      snapshot.forEach(doc => {
-        const post = doc.data();
-        db.collection("users").doc(post.userId).get().then(userDoc => {
-          const userData = userDoc.data();
+  db.collection("posts").orderBy("time","desc").onSnapshot(snapshot=>{
+    feedDiv.innerHTML = "";
+    snapshot.forEach(doc=>{
+      const post = doc.data();
+      const div = document.createElement("div");
+      div.className="post";
+      const likesCount = post.likes ? post.likes.length : 0;
+      const commentsCount = post.comments ? post.comments.length : 0;
+      div.innerHTML = `
+        <div class="user-info">
+          <img src="${post.profilePic || 'default.png'}">
+          <b onclick="viewProfile('${post.userId}')" style="cursor:pointer">${post.name}</b>
+        </div>
+        <p>${post.text}</p>
+        <button onclick="likePost('${doc.id}')">Like (${likesCount})</button>
+        <button onclick="commentPost('${doc.id}')">Comment (${commentsCount})</button>
+        <div id="comments-${doc.id}"></div>
+      `;
+      feedDiv.appendChild(div);
+      loadComments(doc.id);
+    });
+  });
+}
+
+// ----------------------
+// Like / Comment
+// ----------------------
+function likePost(postId){
+  const postRef = db.collection("posts").doc(postId);
+  postRef.get().then(doc=>{
+    const post = doc.data();
+    let likes = post.likes || [];
+    if(likes.includes(currentUser.uid)){
+      likes = likes.filter(id=>id!==currentUser.uid);
+    } else {
+      likes.push(currentUser.uid);
+    }
+    postRef.update({likes});
+  });
+}
+
+function commentPost(postId){
+  const commentText = prompt("Write a comment:");
+  if(!commentText) return;
+  const postRef = db.collection("posts").doc(postId);
+  postRef.get().then(doc=>{
+    const post = doc.data();
+    let comments = post.comments || [];
+    comments.push({userId: currentUser.uid, text: commentText});
+    postRef.update({comments});
+  });
+}
+
+function loadComments(postId){
+  const postRef = db.collection("posts").doc(postId);
+  postRef.onSnapshot(doc=>{
+    const post = doc.data();
+    const commentsDiv = document.getElementById(`comments-${postId}`);
+    commentsDiv.innerHTML = "";
+    if(post.comments){
+      post.comments.forEach(c=>{
+        db.collection("users").doc(c.userId).get().then(uDoc=>{
+          const user = uDoc.data();
           const div = document.createElement("div");
-          div.className = "post";
-          div.innerHTML = `
-            <div class="user-info">
-              <img src="${userData.profilePic || 'default.png'}">
-              <b onclick="viewProfile('${post.userId}')" style="cursor:pointer">${userData.name || post.userId}</b>
-            </div>
-            <p>${post.text}</p>
-          `;
-          feedDiv.appendChild(div);
+          div.innerHTML = `<b>${user.name || c.userId}</b>: ${c.text}`;
+          commentsDiv.appendChild(div);
         });
       });
-    });
+    }
+  });
 }
 
 // ----------------------
@@ -156,7 +206,7 @@ function loadFeed(){
 // ----------------------
 function viewProfile(userId){
   localStorage.setItem("viewUserId",userId);
-  window.location = "profile.html";
+  window.location="profile.html";
 }
 
 // ----------------------
@@ -164,35 +214,33 @@ function viewProfile(userId){
 // ----------------------
 function loadFriends(){
   const friendsDiv = document.getElementById("friendsList");
-  db.collection("users").doc(currentUser.uid).collection("friends")
-    .onSnapshot(snapshot => {
-      friendsDiv.innerHTML = "";
-      snapshot.forEach(doc => {
-        const friend = doc.data();
-        const div = document.createElement("div");
-        div.className = "friend-item";
-        div.innerHTML = `<img src="${friend.profilePic || 'default.png'}"><span>${friend.name}</span>`;
-        friendsDiv.appendChild(div);
-      });
+  db.collection("users").doc(currentUser.uid).collection("friends").onSnapshot(snapshot=>{
+    friendsDiv.innerHTML="";
+    snapshot.forEach(doc=>{
+      const friend = doc.data();
+      const div = document.createElement("div");
+      div.className="friend-item";
+      div.innerHTML=`<img src="${friend.profilePic || 'default.png'}"><span>${friend.name}</span>`;
+      friendsDiv.appendChild(div);
     });
+  });
 }
 
 function loadFriendRequests(){
   const requestsDiv = document.getElementById("friendRequests");
-  db.collection("users").doc(currentUser.uid).collection("requests")
-    .onSnapshot(snapshot => {
-      requestsDiv.innerHTML = "";
-      snapshot.forEach(doc => {
-        const req = doc.data();
-        const div = document.createElement("div");
-        div.innerHTML = `${req.name} <button onclick="acceptFriend('${doc.id}','${req.userId}')">Accept</button>`;
-        requestsDiv.appendChild(div);
-      });
+  db.collection("users").doc(currentUser.uid).collection("requests").onSnapshot(snapshot=>{
+    requestsDiv.innerHTML="";
+    snapshot.forEach(doc=>{
+      const req = doc.data();
+      const div = document.createElement("div");
+      div.innerHTML=`${req.name} <button onclick="acceptFriend('${doc.id}','${req.userId}')">Accept</button>`;
+      requestsDiv.appendChild(div);
     });
+  });
 }
 
 function acceptFriend(requestId, friendId){
-  db.collection("users").doc(currentUser.uid).collection("friends").doc(friendId).set({name:"friend"}); // simplified
+  db.collection("users").doc(currentUser.uid).collection("friends").doc(friendId).set({name:"friend"}); 
   db.collection("users").doc(currentUser.uid).collection("requests").doc(requestId).delete();
 }
 
@@ -202,62 +250,64 @@ function acceptFriend(requestId, friendId){
 function loadChatFriends(){
   const select = document.getElementById("chatFriendSelect");
   select.innerHTML = '<option value="">Select Friend</option>';
-  db.collection("users").doc(currentUser.uid).collection("friends")
-    .onSnapshot(snapshot=>{
-      snapshot.forEach(doc=>{
-        const friend = doc.data();
-        const opt = document.createElement("option");
-        opt.value = doc.id;
-        opt.text = friend.name;
-        select.appendChild(opt);
-      });
+  db.collection("users").doc(currentUser.uid).collection("friends").onSnapshot(snapshot=>{
+    snapshot.forEach(doc=>{
+      const friend = doc.data();
+      const opt = document.createElement("option");
+      opt.value = doc.id;
+      opt.text = friend.name;
+      select.appendChild(opt);
     });
+  });
 }
 
 let chatFriendId = null;
 function loadChat(friendId){
   chatFriendId = friendId;
   const chatDiv = document.getElementById("chatMessages");
-  chatDiv.innerHTML = "";
+  chatDiv.innerHTML="";
   if(!friendId) return;
-  db.collection("chats").doc(currentUser.uid).collection(friendId)
-    .orderBy("time","asc")
-    .onSnapshot(snapshot=>{
-      chatDiv.innerHTML = "";
-      snapshot.forEach(doc=>{
-        const msg = doc.data();
-        const div = document.createElement("div");
-        div.innerHTML = `<b>${msg.sender===currentUser.uid?'Me':'Friend'}</b>: ${msg.text}`;
-        chatDiv.appendChild(div);
-      });
+  db.collection("chats").doc(currentUser.uid).collection(friendId).orderBy("time","asc").onSnapshot(snapshot=>{
+    chatDiv.innerHTML="";
+    snapshot.forEach(doc=>{
+      const msg = doc.data();
+      const div = document.createElement("div");
+      div.innerHTML=`<b>${msg.sender===currentUser.uid?'Me':'Friend'}</b>: ${msg.text}`;
+      chatDiv.appendChild(div);
     });
+  });
 }
 
 function sendMessage(){
-  const text = document.getElementById("chatInput").value;
-  if(!chatFriendId || text.trim()==="") return;
+  const text = document.getElementById("chatInput").value.trim();
+  if(!chatFriendId || text==="") return;
   const message = {text, sender:currentUser.uid, time:firebase.firestore.FieldValue.serverTimestamp()};
   db.collection("chats").doc(currentUser.uid).collection(chatFriendId).add(message);
   db.collection("chats").doc(chatFriendId).collection(currentUser.uid).add(message);
-  document.getElementById("chatInput").value = "";
+  document.getElementById("chatInput").value="";
 }
 
 // ----------------------
 // My Profile Panel
 // ----------------------
 function loadMyProfile(){
-  db.collection("users").doc(currentUser.uid).collection("posts")
-    .onSnapshot(snapshot=>{
-      const myPostsDiv = document.getElementById("myPosts");
-      myPostsDiv.innerHTML = "";
-      snapshot.forEach(doc=>{
-        const post = doc.data();
-        const div = document.createElement("div");
-        div.className="post";
-        div.innerHTML = `<p>${post.text}</p>`;
-        myPostsDiv.appendChild(div);
-      });
+  const myPostsDiv = document.getElementById("myPosts");
+  db.collection("posts").where("userId","==",currentUser.uid).orderBy("time","desc").onSnapshot(snapshot=>{
+    myPostsDiv.innerHTML="";
+    snapshot.forEach(doc=>{
+      const post = doc.data();
+      const div = document.createElement("div");
+      div.className="post";
+      div.innerHTML=`
+        <p>${post.text}</p>
+        <button onclick="likePost('${doc.id}')">Like (${post.likes ? post.likes.length : 0})</button>
+        <button onclick="commentPost('${doc.id}')">Comment (${post.comments ? post.comments.length : 0})</button>
+        <div id="comments-${doc.id}"></div>
+      `;
+      myPostsDiv.appendChild(div);
+      loadComments(doc.id);
     });
+  });
 }
 
 function updateBio(){
