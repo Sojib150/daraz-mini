@@ -1,25 +1,76 @@
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #f0f2f5;
+  margin: 0;
+  padding: 0;
   text-align: center;
 }
 
-.post-box {
-  background: white;
-  padding: 15px;
-  margin: 10px;
-  border-radius: 8px;
+.header {
+  background: #1877F2;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-textarea {
+.auth-box, .post-box, .friend-box {
+  background: white;
+  padding: 15px;
+  margin: 10px auto;
+  border-radius: 10px;
+  width: 95%;
+  max-width: 500px;
+  box-shadow: 0px 0px 5px #aaa;
+}
+
+textarea, input {
   width: 90%;
-  height: 60px;
+  padding: 8px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  padding: 8px 15px;
+  margin: 5px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  background: #1877F2;
+  color: white;
 }
 
 .post {
   background: white;
-  margin: 10px;
+  margin: 10px auto;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: 10px;
+  width: 95%;
+  max-width: 500px;
   text-align: left;
+  box-shadow: 0px 0px 5px #aaa;
+}
+
+.post .like-btn, .post .comment-btn {
+  cursor: pointer;
+  margin-right: 10px;
+  color: #555;
+}
+
+.post .like-btn.liked {
+  color: red;
+}
+
+.comment-box {
+  margin-top: 5px;
+}
+
+.comment-box input {
+  width: 70%;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
