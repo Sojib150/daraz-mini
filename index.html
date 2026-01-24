@@ -1,28 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Bubble Shooter</title>
-<link rel="stylesheet" href="style.css">
+  <title>Mini Facebook - Login</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="topbar">
-  💰 Coins: <span id="coins">200</span>
-  <button id="withdraw">Withdraw</button>
-</div>
+<h2>Mini Facebook</h2>
 
-<div id="levels">
-  <button onclick="startGame(1)">Level 1</button>
-  <button onclick="startGame(2)">Level 2</button>
-  <button onclick="startGame(3)">Level 3</button>
-</div>
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
 
-<canvas id="game" width="360" height="520"></canvas>
+<button onclick="signup()">Sign Up</button>
+<button onclick="login()">Login</button>
 
-<audio id="shootSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
-<audio id="winSound" src="https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg"></audio>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="app.js"></script>
 
-<script src="game.js"></script>
 </body>
 </html>
