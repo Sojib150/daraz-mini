@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Profile - Mini Facebook</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="header">
+  <h2>Mini Facebook 📰</h2>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<div class="container">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <ul class="menu">
+      <li onclick="goHome()">Feed</li>
+      <li onclick="goToMyProfile()">My Profile</li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- User Profile Panel -->
+    <div class="panel" id="profilePanel">
+      <div class="cover-photo">
+        <img id="profileCover" src="" style="width:100%;height:150px;object-fit:cover;border-radius:10px;">
+      </div>
+      <div style="text-align:center;margin-top:-50px;">
+        <img id="profilePic" src="" class="profile-pic" style="width:100px;height:100px;border:3px solid white;border-radius:50%;">
+      </div>
+      <h3 id="profileNameDisplay" style="text-align:center;"></h3>
+      <p style="text-align:center;" id="profileBioDisplay"></p>
+
+      <h4>Friends</h4>
+      <div id="profileFriends"></div>
+
+      <h4>Posts</h4>
+      <div id="profilePosts"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script>
+// Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyB6b93A_HeU4FADs3o2Ysw6-dlRRS2TbZk",
+  authDomain: "telegram-miniapp-e8cc0.firebaseapp.com",
+  databaseURL: "https://telegram-miniapp-e8cc0-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "telegram-miniapp-e8cc0",
+  storageBucket: "telegram-miniapp-e8cc0.appspot.com",
+  messagingSenderId: "827930913054",
+  appId: "1:827930913054:web:502b56e0c198d8e9ff410f"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+let currentUser = null;
+let viewUserId = localStorage.getItem("viewUserId");
+
+// Auth Check
+auth.onAuthStateChanged(user=>{
+  if(user){
+    currentUser = user;
+    loadProfile();
+  } else {
+    window.location = "login.html";
+  }
+});
+
+// Logout
+function logout(){ auth.signOut(); }
+function goHome(){ window.location="feed.html"; }
+function goToMyProfile(){ window.location="feed.html"; showMyProfilePanel(); }
+
+// Load Profile
+function loadProfile(){
+  db.collection("users").doc(viewUserId).get().then(doc=>{
+    if(doc.exists){
+      const data = doc.data();
+      document.getElementById("profileNameDisplay").innerText = data.name || viewUserId;
+      document.getElementById("profileBioDisplay").innerText = data.bio || "";
+      document.getElementById("profilePic").src = data.profilePic || "default.png";
+      document.getElementById("profileCover").src = data.coverPhoto || "cover-default.jpg";
+      loadProfileFriends(viewUserId);
+      loadProfilePosts(viewUserId);
+    }
+  });
+}
+
+// Load Friends of Profile
+function loadProfileFriends(uid){
+  const friendsDiv = document.getElementById("profileFriends");
+  friendsDiv.innerHTML = "";
+  db.collection("users").doc(uid).collection("friends")
+    .get().then(snapshot=>{
+      snapshot.forEach(doc=>{
+        const friend = doc.data();
+        const div = document.createElement("div");
+        div.className = "friend-item";
+        div.innerHTML = `<img src="${friend.profilePic || 'default.png'}"><span>${friend.name}</span>`;
+        friendsDiv.appendChild(div);
+      });
+    });
+}
+
+// Load Posts of Profile
+function loadProfilePosts(uid){
+  const postsDiv = document.getElementById("profilePosts");
+  postsDiv.innerHTML = "";
+  db.collection("posts").where("userId","==",uid).orderBy("time","desc")
+    .get().then(snapshot=>{
+      snapshot.forEach(doc=>{
+        const post = doc.data();
+        const div = document.createElement("div");
+        div.className = "post";
+        div.innerHTML = `
+          <div class="user-info">
+            <img src="${post.profilePic || 'default.png'}">
+            <b>${post.name || 'User'}</b>
+          </div>
+          <p>${post.text}</p>
+          <button onclick="likePost('${doc.id}')">Like</button>
+          <button onclick="commentPost('${doc.id}')">Comment</button>
+        `;
+        postsDiv.appendChild(div);
+      });
+    });
+}
+
+// Like and Comment Placeholder Functions
+function likePost(postId){
+  alert("Like functionality coming soon!");
+}
+function commentPost(postId){
+  alert("Comment functionality coming soon!");
+}
+</script>
+</body>
+</html>
