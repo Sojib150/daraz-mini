@@ -3,7 +3,6 @@ body {
   background: #f0f2f5;
   margin: 0;
   padding: 0;
-  text-align: center;
 }
 
 .header {
@@ -15,17 +14,77 @@ body {
   align-items: center;
 }
 
-.auth-box, .post-box, .friend-box, .chat-box, .profile-box {
-  background: white;
-  padding: 15px;
-  margin: 10px auto;
-  border-radius: 10px;
-  width: 95%;
-  max-width: 500px;
-  box-shadow: 0px 0px 5px #aaa;
+.container {
+  display: flex;
+  height: calc(100vh - 60px);
 }
 
-textarea, input, select {
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background: white;
+  box-shadow: 2px 0 5px #aaa;
+  padding: 10px;
+}
+
+.profile-box {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+#onlineStatus {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: green;
+  margin-left: 5px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+}
+
+.menu li {
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  transition: background 0.2s;
+}
+
+.menu li:hover {
+  background: #e4e6eb;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #f0f2f5;
+}
+
+.panel {
+  display: block;
+}
+
+.post-box {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 0 5px #aaa;
+}
+
+textarea, input, select, button {
   width: 90%;
   padding: 8px;
   margin-bottom: 5px;
@@ -34,24 +93,18 @@ textarea, input, select {
 }
 
 button {
-  padding: 8px 15px;
-  margin: 5px;
-  border-radius: 5px;
-  border: none;
   cursor: pointer;
   background: #1877F2;
   color: white;
+  border: none;
 }
 
 .post {
   background: white;
-  margin: 10px auto;
+  margin-bottom: 10px;
   padding: 10px;
   border-radius: 10px;
-  width: 95%;
-  max-width: 500px;
-  text-align: left;
-  box-shadow: 0px 0px 5px #aaa;
+  box-shadow: 0 0 5px #aaa;
 }
 
 .post .like-btn, .post .comment-btn {
@@ -64,40 +117,15 @@ button {
   color: red;
 }
 
-.comment-box {
-  margin-top: 5px;
-}
-
 .comment-box input {
   width: 70%;
-  padding: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
 }
 
 .chatMessages {
-  height: 200px;
+  height: 300px;
   overflow-y: auto;
-  background: #f0f2f5;
+  background: #fff;
   padding: 10px;
-  margin-bottom: 5px;
   border-radius: 8px;
-  text-align: left;
-}
-
-.profile-pic {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  vertical-align: middle;
-  margin-right: 10px;
-}
-
-#onlineStatus {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: green;
-  margin-left: 5px;
+  margin-bottom: 5px;
 }
