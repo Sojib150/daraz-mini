@@ -1,3 +1,6 @@
+/* ======================
+   GENERAL STYLES
+====================== */
 body {
   font-family: Arial, sans-serif;
   background: #f0f2f5;
@@ -19,7 +22,9 @@ body {
   height: calc(100vh - 60px);
 }
 
-/* Sidebar */
+/* ======================
+   SIDEBAR
+====================== */
 .sidebar {
   width: 220px;
   background: white;
@@ -47,6 +52,10 @@ body {
   margin-left: 5px;
 }
 
+.sidebar input[type=file] {
+  margin-top: 5px;
+}
+
 .menu {
   list-style: none;
   padding: 0;
@@ -64,7 +73,9 @@ body {
   background: #e4e6eb;
 }
 
-/* Main content */
+/* ======================
+   MAIN CONTENT
+====================== */
 .main-content {
   flex: 1;
   padding: 20px;
@@ -149,6 +160,7 @@ button {
    MOBILE RESPONSIVE
 ====================== */
 @media screen and (max-width: 768px) {
+
   .container {
     flex-direction: column;
   }
@@ -158,6 +170,7 @@ button {
     display: flex;
     overflow-x: auto;
     padding: 5px;
+    box-shadow: none;
   }
 
   .sidebar .profile-box {
@@ -181,5 +194,16 @@ button {
 
   .chatMessages {
     height: 200px;
+  }
+
+  .post .user-info img,
+  .friend-item img {
+    width: 30px;
+    height: 30px;
+  }
+
+  textarea, input, select, button {
+    width: 95%;
+    font-size: 14px;
   }
 }
