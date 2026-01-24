@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mini Facebook - Feed</title>
+  <title>Mini Facebook</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>Welcome to Mini Facebook 🎉</h2>
+<h2>Mini Facebook 📰</h2>
+
+<div class="post-box">
+  <textarea id="postText" placeholder="What's on your mind?"></textarea>
+  <br>
+  <button onclick="addPost()">Post</button>
+</div>
+
+<hr>
+
+<div id="feed"></div>
 
 <button onclick="logout()">Logout</button>
-
-<p>Login successful ✅</p>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
