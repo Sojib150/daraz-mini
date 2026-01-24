@@ -31,7 +31,7 @@
 
   <!-- Main Content -->
   <div class="main-content">
-    <!-- Feed Panel -->
+    <!-- Feed -->
     <div id="feedPanel" class="panel">
       <div class="post-box">
         <textarea id="postText" placeholder="What's on your mind?"></textarea>
@@ -66,12 +66,20 @@
     <!-- My Profile -->
     <div id="myProfilePanel" class="panel" style="display:none;">
       <h3>My Profile</h3>
-      <img id="myProfilePic" src="" class="profile-pic" style="width:100px;height:100px;">
+      <input type="file" id="coverUpload" onchange="uploadCoverPhoto(event)">
+      <div class="cover-photo">
+        <img id="myCover" src="" style="width:100%;height:150px;object-fit:cover;border-radius:10px;">
+      </div>
+      <img id="myProfilePic" src="" class="profile-pic" style="width:100px;height:100px;margin-top:-50px;border:3px solid white;border-radius:50%;">
       <p>Name: <span id="myName"></span></p>
       <p>Email: <span id="myEmail"></span></p>
       <p>Bio: <span id="myBio"></span></p>
       <textarea id="editBio" placeholder="Edit your bio"></textarea>
       <button onclick="updateBio()">Update Bio</button>
+      <h4>My Posts</h4>
+      <div id="myPosts"></div>
+      <h4>My Friends</h4>
+      <div id="myFriends"></div>
     </div>
 
   </div>
