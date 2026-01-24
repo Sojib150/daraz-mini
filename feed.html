@@ -1,91 +1,74 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mini Facebook</title>
+  <title>Mini Facebook - Feed</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <div class="header">
-  <h2>Mini Facebook 📰</h2>
+  <h2>Mini Facebook</h2>
   <button onclick="logout()">Logout</button>
 </div>
 
 <div class="container">
-  <!-- Sidebar -->
   <div class="sidebar">
-    <div class="profile-box">
-      <img id="profileImage" src="" class="profile-pic">
-      <span id="profileName"></span>
-      <span id="onlineStatus"></span>
-      <input type="file" id="profileUpload" onchange="uploadProfilePic(event)">
-    </div>
     <ul class="menu">
       <li onclick="showPanel('feedPanel')">Feed</li>
-      <li onclick="showPanel('requestsPanel')">Friend Requests</li>
-      <li onclick="showPanel('friendsPanel')">Friends List</li>
-      <li onclick="showPanel('chatPanel')">Private Chat</li>
       <li onclick="showPanel('myProfilePanel')">My Profile</li>
+      <li onclick="showPanel('friendsPanel')">Friends</li>
+      <li onclick="showPanel('chatPanel')">Chat</li>
     </ul>
   </div>
 
-  <!-- Main Content -->
   <div class="main-content">
-    <!-- Feed -->
-    <div id="feedPanel" class="panel">
-      <div class="post-box">
-        <textarea id="postText" placeholder="What's on your mind?"></textarea>
-        <button onclick="addPost()">Post</button>
-      </div>
+    <!-- Feed Panel -->
+    <div class="panel" id="feedPanel">
+      <h3>New Post</h3>
+      <textarea id="postText" placeholder="What's on your mind?"></textarea>
+      <button onclick="addPost()">Post</button>
+      <h3>Feed</h3>
       <div id="feed"></div>
     </div>
 
-    <!-- Friend Requests -->
-    <div id="requestsPanel" class="panel" style="display:none;">
-      <h3>Friend Requests</h3>
-      <div id="friendRequests"></div>
+    <!-- My Profile Panel -->
+    <div class="panel" id="myProfilePanel" style="display:none;">
+      <div class="cover-photo">
+        <img id="myCover" src="" style="width:100%;height:150px;object-fit:cover;border-radius:10px;">
+      </div>
+      <div style="text-align:center;margin-top:-50px;">
+        <img id="myProfilePic" src="" class="profile-pic" style="width:100px;height:100px;border:3px solid white;border-radius:50%;">
+      </div>
+      <h3 id="myName" style="text-align:center;"></h3>
+      <p id="myBio" style="text-align:center;"></p>
+
+      <input type="file" onchange="uploadProfilePic(event)">
+      <input type="file" onchange="uploadCoverPhoto(event)">
+      <textarea id="editBio" placeholder="Edit Bio"></textarea>
+      <button onclick="updateBio()">Update Bio</button>
+
+      <h4>My Posts</h4>
+      <div id="myPosts"></div>
     </div>
 
-    <!-- Friends List -->
-    <div id="friendsPanel" class="panel" style="display:none;">
+    <!-- Friends Panel -->
+    <div class="panel" id="friendsPanel" style="display:none;">
+      <h3>Friend Requests</h3>
+      <div id="friendRequests"></div>
       <h3>Friends List</h3>
       <div id="friendsList"></div>
     </div>
 
-    <!-- Private Chat -->
-    <div id="chatPanel" class="panel" style="display:none;">
-      <h3>Private Chat</h3>
-      <select id="chatFriendSelect" onchange="loadChat(this.value)">
-        <option value="">Select Friend</option>
-      </select>
-      <div id="chatMessages" class="chatMessages"></div>
-      <input type="text" id="chatInput" placeholder="Type a message...">
+    <!-- Chat Panel -->
+    <div class="panel" id="chatPanel" style="display:none;">
+      <h3>Chat</h3>
+      <select id="chatFriendSelect" onchange="loadChat(this.value)"></select>
+      <div id="chatMessages" style="border:1px solid #ccc;height:200px;overflow:auto;margin-top:10px;"></div>
+      <input type="text" id="chatInput" placeholder="Type message">
       <button onclick="sendMessage()">Send</button>
     </div>
-
-    <!-- My Profile -->
-    <div id="myProfilePanel" class="panel" style="display:none;">
-      <h3>My Profile</h3>
-      <input type="file" id="coverUpload" onchange="uploadCoverPhoto(event)">
-      <div class="cover-photo">
-        <img id="myCover" src="" style="width:100%;height:150px;object-fit:cover;border-radius:10px;">
-      </div>
-      <img id="myProfilePic" src="" class="profile-pic" style="width:100px;height:100px;margin-top:-50px;border:3px solid white;border-radius:50%;">
-      <p>Name: <span id="myName"></span></p>
-      <p>Email: <span id="myEmail"></span></p>
-      <p>Bio: <span id="myBio"></span></p>
-      <textarea id="editBio" placeholder="Edit your bio"></textarea>
-      <button onclick="updateBio()">Update Bio</button>
-      <h4>My Posts</h4>
-      <div id="myPosts"></div>
-      <h4>My Friends</h4>
-      <div id="myFriends"></div>
-    </div>
-
   </div>
 </div>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
