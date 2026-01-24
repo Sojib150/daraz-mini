@@ -1,0 +1,25 @@
+body {
+  font-family: Arial;
+  background: #f0f2f5;
+  text-align: center;
+}
+
+.post-box {
+  background: white;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 8px;
+}
+
+textarea {
+  width: 90%;
+  height: 60px;
+}
+
+.post {
+  background: white;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: left;
+}
