@@ -6,24 +6,24 @@
 </head>
 <body>
 
-<h2>Mini Facebook 📰</h2>
+<!-- HEADER -->
+<div class="header">
+  <h2>Mini Facebook</h2>
+  <button onclick="logout()">Logout</button>
+</div>
 
+<!-- POST BOX -->
 <div class="post-box">
   <textarea id="postText" placeholder="What's on your mind?"></textarea>
-  <br>
   <button onclick="addPost()">Post</button>
 </div>
 
-<hr>
-
+<!-- FEED -->
 <div id="feed"></div>
-
-<button onclick="logout()">Logout</button>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="app.js"></script>
-
 </body>
 </html>
