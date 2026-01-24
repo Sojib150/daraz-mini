@@ -1,131 +1,25 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f0f2f5;
-  margin: 0;
-  padding: 0;
+/* sidebar + panels same as before */
+.profile-box input[type=file] {
+  margin-top: 5px;
 }
-
-.header {
-  background: #1877F2;
-  color: white;
-  padding: 10px;
+.post .user-info {
   display: flex;
-  justify-content: space-between;
   align-items: center;
 }
-
-.container {
-  display: flex;
-  height: calc(100vh - 60px);
-}
-
-/* Sidebar */
-.sidebar {
-  width: 220px;
-  background: white;
-  box-shadow: 2px 0 5px #aaa;
-  padding: 10px;
-}
-
-.profile-box {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.profile-pic {
-  width: 50px;
-  height: 50px;
+.post .user-info img {
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
-}
-
-#onlineStatus {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: green;
-  margin-left: 5px;
-}
-
-.menu {
-  list-style: none;
-  padding: 0;
-}
-
-.menu li {
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 8px;
-  margin-bottom: 5px;
-  transition: background 0.2s;
-}
-
-.menu li:hover {
-  background: #e4e6eb;
-}
-
-/* Main content */
-.main-content {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  background: #f0f2f5;
-}
-
-.panel {
-  display: block;
-}
-
-.post-box {
-  background: white;
-  padding: 10px;
-  border-radius: 10px;
-  margin-bottom: 15px;
-  box-shadow: 0 0 5px #aaa;
-}
-
-textarea, input, select, button {
-  width: 90%;
-  padding: 8px;
-  margin-bottom: 5px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-button {
-  cursor: pointer;
-  background: #1877F2;
-  color: white;
-  border: none;
-}
-
-.post {
-  background: white;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 0 5px #aaa;
-}
-
-.post .like-btn, .post .comment-btn {
-  cursor: pointer;
   margin-right: 10px;
-  color: #555;
 }
-
-.post .like-btn.liked {
-  color: red;
-}
-
-.comment-box input {
-  width: 70%;
-}
-
-.chatMessages {
-  height: 300px;
-  overflow-y: auto;
-  background: #fff;
-  padding: 10px;
-  border-radius: 8px;
+.friend-item {
+  display: flex;
+  align-items: center;
   margin-bottom: 5px;
+}
+.friend-item img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-right: 10px;
 }
