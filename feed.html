@@ -11,42 +11,56 @@
   <button onclick="logout()">Logout</button>
 </div>
 
-<div class="profile-box">
-  <img id="profileImage" src="" alt="Profile Pic" class="profile-pic">
-  <span id="profileName"></span>
-  <span id="onlineStatus"></span>
-</div>
+<div class="container">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="profile-box">
+      <img id="profileImage" src="" alt="Profile Pic" class="profile-pic">
+      <span id="profileName"></span>
+      <span id="onlineStatus"></span>
+    </div>
+    <ul class="menu">
+      <li onclick="showPanel('feedPanel')">Feed</li>
+      <li onclick="showPanel('requestsPanel')">Friend Requests</li>
+      <li onclick="showPanel('friendsPanel')">Friends List</li>
+      <li onclick="showPanel('chatPanel')">Private Chat</li>
+    </ul>
+  </div>
 
-<!-- POST BOX -->
-<div class="post-box">
-  <textarea id="postText" placeholder="What's on your mind?"></textarea>
-  <button onclick="addPost()">Post</button>
-</div>
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <!-- Feed -->
+    <div id="feedPanel" class="panel">
+      <div class="post-box">
+        <textarea id="postText" placeholder="What's on your mind?"></textarea>
+        <button onclick="addPost()">Post</button>
+      </div>
+      <div id="feed"></div>
+    </div>
 
-<!-- FRIEND REQUESTS -->
-<div class="friend-box">
-  <h3>Friend Requests</h3>
-  <div id="friendRequests"></div>
-</div>
+    <!-- Friend Requests -->
+    <div id="requestsPanel" class="panel" style="display:none;">
+      <h3>Friend Requests</h3>
+      <div id="friendRequests"></div>
+    </div>
 
-<!-- FRIEND LIST -->
-<div class="friend-box">
-  <h3>Friends List</h3>
-  <div id="friendsList"></div>
-</div>
+    <!-- Friends List -->
+    <div id="friendsPanel" class="panel" style="display:none;">
+      <h3>Friends List</h3>
+      <div id="friendsList"></div>
+    </div>
 
-<!-- FEED -->
-<div id="feed"></div>
-
-<!-- PRIVATE CHAT -->
-<div class="chat-box">
-  <h3>Private Chat</h3>
-  <select id="chatFriendSelect" onchange="loadChat(this.value)">
-    <option value="">Select Friend</option>
-  </select>
-  <div id="chatMessages" class="chatMessages"></div>
-  <input type="text" id="chatInput" placeholder="Type a message...">
-  <button onclick="sendMessage()">Send</button>
+    <!-- Private Chat -->
+    <div id="chatPanel" class="panel" style="display:none;">
+      <h3>Private Chat</h3>
+      <select id="chatFriendSelect" onchange="loadChat(this.value)">
+        <option value="">Select Friend</option>
+      </select>
+      <div id="chatMessages" class="chatMessages"></div>
+      <input type="text" id="chatInput" placeholder="Type a message...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
