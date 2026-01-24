@@ -15,7 +15,7 @@ body {
   align-items: center;
 }
 
-.auth-box, .post-box, .friend-box {
+.auth-box, .post-box, .friend-box, .chat-box, .profile-box {
   background: white;
   padding: 15px;
   margin: 10px auto;
@@ -25,7 +25,7 @@ body {
   box-shadow: 0px 0px 5px #aaa;
 }
 
-textarea, input {
+textarea, input, select {
   width: 90%;
   padding: 8px;
   margin-bottom: 5px;
@@ -73,4 +73,31 @@ button {
   padding: 5px;
   border-radius: 5px;
   border: 1px solid #ccc;
+}
+
+.chatMessages {
+  height: 200px;
+  overflow-y: auto;
+  background: #f0f2f5;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+#onlineStatus {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: green;
+  margin-left: 5px;
 }
