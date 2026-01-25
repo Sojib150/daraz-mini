@@ -1,40 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="bn">
 <head>
-  <title>User Profile - Mini Facebook</title>
+  <meta charset="UTF-8">
+  <title>Profile</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="header">
-  <h2>Mini Facebook</h2>
-  <button onclick="logout()">Logout</button>
+
+<div class="profile-header">
+  <img src="https://i.pravatar.cc/150" class="profile-pic">
+  <h2 id="username">User Name</h2>
+  <p id="bio">This is my bio</p>
+  <button onclick="editProfile()">Edit Profile</button>
 </div>
 
-<div class="container">
-  <div class="main-content">
-    <div class="panel" id="profilePanel">
-      <div class="cover-photo">
-        <img id="profileCover" src="" style="width:100%;height:150px;object-fit:cover;border-radius:10px;">
-      </div>
-      <div style="text-align:center;margin-top:-50px;">
-        <img id="profilePic" src="" class="profile-pic" style="width:100px;height:100px;border:3px solid white;border-radius:50%;">
-      </div>
-      <h3 id="profileNameDisplay" style="text-align:center;"></h3>
-      <p style="text-align:center;" id="profileBioDisplay"></p>
+<div class="profile-posts">
+  <h3>Posts</h3>
 
-      <h4>Friends</h4>
-      <div id="profileFriends"></div>
-
-      <h4>Posts</h4>
-      <div id="profilePosts"></div>
-    </div>
+  <div class="post">
+    <p>এইটা আমার নিজের পোস্ট 💙</p>
+    <button>❤️ Like</button>
+    <button>💬 Comment</button>
   </div>
+
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
