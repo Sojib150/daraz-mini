@@ -1,140 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Mini Facebook - Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      background: #f0f2f5;
-    }
-
-    .login-wrapper {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .login-box {
-      width: 100%;
-      max-width: 360px;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-    }
-
-    .login-box h2 {
-      text-align: center;
-      color: #1877f2;
-      margin-bottom: 20px;
-    }
-
-    .login-box input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-
-    .login-box button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 8px;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .login-btn {
-      background: #1877f2;
-      color: #fff;
-    }
-
-    .signup-btn {
-      background: #42b72a;
-      color: #fff;
-    }
-  </style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+<title>Mini Facebook</title>
 </head>
-
 <body>
 
-<div class="login-wrapper">
-  <div class="login-box">
-    <h2>Mini Facebook</h2>
-
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-
-    <button class="login-btn" onclick="login()">Login</button>
-    <button class="signup-btn" onclick="signup()">Create Account</button>
-  </div>
+<div class="login-box">
+<h2>Mini Facebook</h2>
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<button onclick="signup()">Sign Up</button>
 </div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyB6b93A_HeU4FADs3o2Ysw6-dlRRS2TbZk",
-    authDomain: "telegram-miniapp-e8cc0.firebaseapp.com",
-    projectId: "telegram-miniapp-e8cc0",
-    messagingSenderId: "827930913054",
-    appId: "1:827930913054:web:502b56e0c198d8e9ff410f"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  function login() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    auth.signInWithEmailAndPassword(email, password)
-      .then(() => {
-        window.location.href = "feed.html";
-      })
-      .catch(err => alert(err.message));
-  }
-
-  function signup() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    auth.createUserWithEmailAndPassword(email, password)
-      .then(res => {
-        const uid = res.user.uid;
-        return db.collection("users").doc(uid).set({
-          email: email,
-          name: email.split("@")[0],
-          bio: "",
-          profilePic: "",
-          coverPhoto: ""
-        });
-      })
-      .then(() => {
-        window.location.href = "feed.html";
-      })
-      .catch(err => alert(err.message));
-  }
-</script>
-
+<script type="module" src="app.js"></script>
 </body>
 </html>
