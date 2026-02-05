@@ -1,55 +1,169 @@
-body{
-  margin:0;
-  font-family:Arial;
-  background:#f0f2f5;
+* {
+  box-sizing: border-box;
 }
-.center{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  background: #f0f2f5;
+  color: #050505;
 }
-.card{
-  background:white;
-  padding:15px;
-  margin:10px;
-  border-radius:8px;
+
+/* ---------- COMMON ---------- */
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
-input,textarea{
-  width:100%;
-  padding:10px;
-  margin:6px 0;
-  border:1px solid #ccc;
-  border-radius:6px;
+
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
-button{
-  background:#1877f2;
-  color:white;
-  border:none;
-  padding:10px;
-  margin-top:5px;
-  border-radius:6px;
+
+/* ---------- INPUT ---------- */
+input,
+textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  outline: none;
 }
-.gray{
-  background:#e4e6eb;
-  color:black;
+
+textarea {
+  resize: none;
+  min-height: 70px;
 }
-.topbar{
-  background:#1877f2;
-  color:white;
-  padding:10px;
-  display:flex;
-  justify-content:space-between;
+
+/* ---------- BUTTON ---------- */
+button {
+  width: 100%;
+  background: #1877f2;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
 }
-.post{
-  background:white;
-  margin:10px;
-  padding:10px;
-  border-radius:8px;
+
+button.gray {
+  background: #e4e6eb;
+  color: #050505;
 }
-.avatar{
-  width:90px;
-  height:90px;
-  border-radius:50%;
-  object-fit:cover;
+
+/* ---------- TOP BAR ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  z-index: 100;
+}
+
+.topbar span {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1877f2;
+}
+
+.topbar button {
+  width: auto;
+  padding: 8px 12px;
+  font-size: 14px;
+  margin-left: 6px;
+}
+
+/* ---------- POST BOX ---------- */
+.post-box {
+  background: #ffffff;
+  margin: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- POST ---------- */
+.post {
+  background: #ffffff;
+  margin: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.post-text {
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+/* ---------- POST ACTIONS ---------- */
+.post-actions {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid #eee;
+  padding-top: 8px;
+}
+
+.post-actions button {
+  background: transparent;
+  color: #65676b;
+  width: auto;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+/* ---------- PROFILE ---------- */
+.profile {
+  text-align: center;
+}
+
+.avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 10px auto;
+  border: 3px solid #1877f2;
+}
+
+.profile h3 {
+  margin: 8px 0 4px;
+}
+
+.profile textarea {
+  margin-top: 8px;
+}
+
+/* ---------- MY POSTS TITLE ---------- */
+.section-title {
+  margin: 16px 12px 6px;
+  font-weight: 600;
+  color: #65676b;
+}
+
+/* ---------- MOBILE FIX ---------- */
+@media (max-width: 480px) {
+  .card {
+    margin: 10px;
+  }
+
+  .avatar {
+    width: 95px;
+    height: 95px;
+  }
 }
