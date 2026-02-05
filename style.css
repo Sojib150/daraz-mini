@@ -1,5 +1,55 @@
-body{margin:0;font-family:Arial;background:#f0f2f5}
-.login-box,.post,.profile{background:#fff;margin:10px;padding:15px;border-radius:8px}
-button{background:#1877f2;color:#fff;border:none;padding:10px;border-radius:5px}
-.topbar{background:#1877f2;color:white;padding:10px;display:flex;justify-content:space-between}
-.avatar{width:80px;height:80px;border-radius:50%}
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f0f2f5;
+}
+.center{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.card{
+  background:white;
+  padding:15px;
+  margin:10px;
+  border-radius:8px;
+}
+input,textarea{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border:1px solid #ccc;
+  border-radius:6px;
+}
+button{
+  background:#1877f2;
+  color:white;
+  border:none;
+  padding:10px;
+  margin-top:5px;
+  border-radius:6px;
+}
+.gray{
+  background:#e4e6eb;
+  color:black;
+}
+.topbar{
+  background:#1877f2;
+  color:white;
+  padding:10px;
+  display:flex;
+  justify-content:space-between;
+}
+.post{
+  background:white;
+  margin:10px;
+  padding:10px;
+  border-radius:8px;
+}
+.avatar{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+}
