@@ -1,13 +1,18 @@
 <body>
-<div class="profile">
-<img id="profilePic" class="avatar">
-<input type="file" onchange="uploadPic(event)">
-<h3 id="profileName"></h3>
-<textarea id="bio" placeholder="Bio"></textarea>
+
+<div class="topbar">
+<button onclick="location='feed.html'">← Back</button>
+</div>
+
+<div class="card center">
+<img id="photo" class="avatar">
+<input type="file" onchange="uploadPhoto(event)">
+<h3 id="name"></h3>
+<textarea id="bio" placeholder="Write your bio"></textarea>
 <button onclick="saveProfile()">Save</button>
 </div>
 
-<h4>My Posts</h4>
+<h4 style="padding-left:10px">My Posts</h4>
 <div id="myPosts"></div>
 
 <script type="module" src="app.js"></script>
