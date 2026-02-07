@@ -1,127 +1,47 @@
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background: #f0f2f5;
 }
 
-body{
-  background:#f0f2f5;
-  max-width:480px;
-  margin:auto;
+.login-container {
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* Header */
-header{
-  background:#1877f2;
-  color:white;
-  padding:12px;
-  font-size:20px;
-  font-weight:bold;
-  text-align:center;
+.login-container h1 {
+    margin-bottom: 20px;
+    color: #3b5998;
 }
 
-/* Top bar buttons */
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  padding:10px;
-  background:white;
+.login-container input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
 }
 
-.topbar button{
-  border:none;
-  background:#e4e6eb;
-  padding:8px 14px;
-  border-radius:20px;
-  font-weight:500;
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    background: #3b5998;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
-/* Post box */
-.post-box{
-  background:white;
-  padding:12px;
-  margin:10px;
-  border-radius:10px;
-}
-
-.post-box textarea{
-  width:100%;
-  border:none;
-  outline:none;
-  resize:none;
-  font-size:15px;
-}
-
-.post-box button{
-  margin-top:8px;
-  width:100%;
-  padding:8px;
-  background:#1877f2;
-  color:white;
-  border:none;
-  border-radius:6px;
-}
-
-/* Feed post */
-.post{
-  background:white;
-  margin:10px;
-  padding:12px;
-  border-radius:10px;
-}
-
-.post .name{
-  font-weight:bold;
-  margin-bottom:4px;
-}
-
-.actions{
-  display:flex;
-  justify-content:space-around;
-  margin-top:8px;
-  border-top:1px solid #ddd;
-  padding-top:6px;
-}
-
-.actions button{
-  background:none;
-  border:none;
-  font-size:14px;
-}
-
-/* People list */
-.people{
-  background:white;
-  margin:10px;
-  border-radius:10px;
-}
-
-.person{
-  display:flex;
-  align-items:center;
-  padding:10px;
-  border-bottom:1px solid #eee;
-}
-
-.person img{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  margin-right:10px;
-}
-
-/* Profile */
-.profile-header{
-  background:white;
-  padding:10px;
-  text-align:center;
-}
-
-.profile-header img{
-  width:90px;
-  height:90px;
-  border-radius:50%;
-  margin-top:-40px;
-  border:4px solid white;
+.login-container button:hover {
+    background: #2d4373;
 }
