@@ -1,20 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="style.css">
-<title>Mini Facebook</title>
+  <meta charset="UTF-8">
+  <title>MiniFacebook - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="center">
+<body>
 
-<div class="card">
-<h2>Mini Facebook</h2>
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
-<button class="gray" onclick="signup()">Sign Up</button>
+<header>MiniFacebook</header>
+
+<div class="post-box">
+  <input type="email" id="email" placeholder="Email" style="width:100%;padding:10px;margin-bottom:8px;">
+  <input type="password" id="password" placeholder="Password" style="width:100%;padding:10px;margin-bottom:8px;">
+  <button onclick="login()">Login</button>
 </div>
 
-<script type="module" src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
