@@ -1,6 +1,6 @@
-// 🔹 Firebase imports (v12)
+// Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { 
+import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword
@@ -14,7 +14,7 @@ import {
   onValue
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
-// 🔹 YOUR Firebase Config (unchanged)
+// Firebase config (UNCHANGED)
 const firebaseConfig = {
   apiKey: "AIzaSyB6b93A_HeU4FADs3o2Ysw6-dlRRS2TbZk",
   authDomain: "telegram-miniapp-e8cc0.firebaseapp.com",
@@ -25,53 +25,58 @@ const firebaseConfig = {
   appId: "1:827930913054:web:502b56e0c198d8e9ff410f"
 };
 
-// 🔹 Init
+// Init
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-// 🔹 SIGN UP
-window.signup = function () {
-  const email = email.value;
-  const password = password.value;
+// ===== LOGIN / SIGNUP =====
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
 
-  createUserWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      alert("Signup success ✅");
-      location.href = "feed.html";
-    })
-    .catch(err => alert(err.message));
-};
+const signupBtn = document.getElementById("signupBtn");
+const loginBtn = document.getElementById("loginBtn");
 
-// 🔹 LOGIN
-window.login = function () {
-  const email = email.value;
-  const password = password.value;
+if (signupBtn) {
+  signupBtn.onclick = () => {
+    const email = emailInput.value;
+    const password = passwordInput.value;
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      alert("Login success ✅");
-      location.href = "feed.html";
-    })
-    .catch(err => alert(err.message));
-};
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        alert("Signup successful ✅");
+        location.href = "feed.html";
+      })
+      .catch(err => alert(err.message));
+  };
+}
 
-// 🔹 CREATE POST
+if (loginBtn) {
+  loginBtn.onclick = () => {
+    const email = emailInput.value;
+    const password = passwordInput.value;
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        alert("Login successful ✅");
+        location.href = "feed.html";
+      })
+      .catch(err => alert(err.message));
+  };
+}
+
+// ===== POSTS =====
 window.createPost = function () {
-  const text = postText.value;
-  if (!text) return alert("Empty post!");
+  const postText = document.getElementById("postText");
+  if (!postText || !postText.value) return;
 
   const postRef = push(ref(db, "posts"));
-
   set(postRef, {
-    text: text,
+    text: postText.value,
     time: Date.now()
-  }).then(() => {
-    postText.value = "";
-  });
+  }).then(() => postText.value = "");
 };
 
-// 🔹 LOAD POSTS
 const postsDiv = document.getElementById("posts");
 if (postsDiv) {
   onValue(ref(db, "posts"), snapshot => {
