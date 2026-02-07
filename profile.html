@@ -1,19 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MiniFacebook - Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
 <body>
 
-<div class="topbar">
-  <button onclick="location='feed.html'">← Back</button>
+<header>Profile</header>
+
+<div class="profile-header">
+  <img src="https://i.pravatar.cc/150">
+  <h3 id="profileName">User Name</h3>
+  <p id="profileBio">This is my bio</p>
 </div>
 
-<div class="card profile">
-  <img id="photo" class="avatar">
-  <h3 id="name"></h3>
-  <textarea id="bio" placeholder="Write your bio"></textarea>
-  <button id="friendBtn"></button>
-  <button onclick="saveProfile()">Save</button>
+<div id="profilePosts">
+  <!-- only user posts -->
 </div>
 
-<div class="section-title">Posts</div>
-<div id="myPosts"></div>
+<div style="padding:10px;">
+  <button onclick="location='feed.html'" style="width:100%;padding:10px;">Back to Feed</button>
+</div>
 
-<script type="module" src="app.js"></script>
+<script src="app.js"></script>
 </body>
+</html>
