@@ -3,19 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MiniFacebook - Login</title>
+<title>Family Book - Login</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>familybook</header>
-
-<div class="post-box">
+<div class="login-container">
+  <h1>Family Book</h1>
   <input type="email" id="email" placeholder="Email" />
   <input type="password" id="password" placeholder="Password" />
   <button id="loginBtn">Login / Signup</button>
 </div>
 
-<script type="module" src="app.js"></script>
+<!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<!-- App JS -->
+<script src="app.js"></script>
 </body>
 </html>
