@@ -1,169 +1,127 @@
-* {
-  box-sizing: border-box;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
 }
 
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif;
-  background: #f0f2f5;
-  color: #050505;
+body{
+  background:#f0f2f5;
+  max-width:480px;
+  margin:auto;
 }
 
-/* ---------- COMMON ---------- */
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+/* Header */
+header{
+  background:#1877f2;
+  color:white;
+  padding:12px;
+  font-size:20px;
+  font-weight:bold;
+  text-align:center;
 }
 
-.card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 16px;
-  margin: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+/* Top bar buttons */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  padding:10px;
+  background:white;
 }
 
-/* ---------- INPUT ---------- */
-input,
-textarea {
-  width: 100%;
-  padding: 12px;
-  margin-top: 8px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 15px;
-  outline: none;
+.topbar button{
+  border:none;
+  background:#e4e6eb;
+  padding:8px 14px;
+  border-radius:20px;
+  font-weight:500;
 }
 
-textarea {
-  resize: none;
-  min-height: 70px;
+/* Post box */
+.post-box{
+  background:white;
+  padding:12px;
+  margin:10px;
+  border-radius:10px;
 }
 
-/* ---------- BUTTON ---------- */
-button {
-  width: 100%;
-  background: #1877f2;
-  color: #fff;
-  border: none;
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
+.post-box textarea{
+  width:100%;
+  border:none;
+  outline:none;
+  resize:none;
+  font-size:15px;
 }
 
-button.gray {
-  background: #e4e6eb;
-  color: #050505;
+.post-box button{
+  margin-top:8px;
+  width:100%;
+  padding:8px;
+  background:#1877f2;
+  color:white;
+  border:none;
+  border-radius:6px;
 }
 
-/* ---------- TOP BAR ---------- */
-.topbar {
-  position: sticky;
-  top: 0;
-  background: #ffffff;
-  padding: 12px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ddd;
-  z-index: 100;
+/* Feed post */
+.post{
+  background:white;
+  margin:10px;
+  padding:12px;
+  border-radius:10px;
 }
 
-.topbar span {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1877f2;
+.post .name{
+  font-weight:bold;
+  margin-bottom:4px;
 }
 
-.topbar button {
-  width: auto;
-  padding: 8px 12px;
-  font-size: 14px;
-  margin-left: 6px;
+.actions{
+  display:flex;
+  justify-content:space-around;
+  margin-top:8px;
+  border-top:1px solid #ddd;
+  padding-top:6px;
 }
 
-/* ---------- POST BOX ---------- */
-.post-box {
-  background: #ffffff;
-  margin: 12px;
-  padding: 12px;
-  border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+.actions button{
+  background:none;
+  border:none;
+  font-size:14px;
 }
 
-/* ---------- POST ---------- */
-.post {
-  background: #ffffff;
-  margin: 12px;
-  padding: 14px;
-  border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+/* People list */
+.people{
+  background:white;
+  margin:10px;
+  border-radius:10px;
 }
 
-.post-text {
-  font-size: 15px;
-  margin-bottom: 10px;
+.person{
+  display:flex;
+  align-items:center;
+  padding:10px;
+  border-bottom:1px solid #eee;
 }
 
-/* ---------- POST ACTIONS ---------- */
-.post-actions {
-  display: flex;
-  justify-content: space-around;
-  border-top: 1px solid #eee;
-  padding-top: 8px;
+.person img{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  margin-right:10px;
 }
 
-.post-actions button {
-  background: transparent;
-  color: #65676b;
-  width: auto;
-  padding: 6px 10px;
-  font-size: 14px;
+/* Profile */
+.profile-header{
+  background:white;
+  padding:10px;
+  text-align:center;
 }
 
-/* ---------- PROFILE ---------- */
-.profile {
-  text-align: center;
-}
-
-.avatar {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 10px auto;
-  border: 3px solid #1877f2;
-}
-
-.profile h3 {
-  margin: 8px 0 4px;
-}
-
-.profile textarea {
-  margin-top: 8px;
-}
-
-/* ---------- MY POSTS TITLE ---------- */
-.section-title {
-  margin: 16px 12px 6px;
-  font-weight: 600;
-  color: #65676b;
-}
-
-/* ---------- MOBILE FIX ---------- */
-@media (max-width: 480px) {
-  .card {
-    margin: 10px;
-  }
-
-  .avatar {
-    width: 95px;
-    height: 95px;
-  }
+.profile-header img{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  margin-top:-40px;
+  border:4px solid white;
 }
