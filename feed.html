@@ -1,23 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MiniFacebook - Feed</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
 <body>
 
+<header>MiniFacebook</header>
+
 <div class="topbar">
-  <span>MiniFacebook</span>
-  <div>
-    <button onclick="goProfile()">Profile</button>
-    <button onclick="logout()">Logout</button>
-  </div>
+  <button onclick="location='profile.html'">Profile</button>
+  <button onclick="logout()">Logout</button>
 </div>
 
-<div class="card">
+<div class="post-box">
   <textarea id="postText" placeholder="What's on your mind?"></textarea>
   <button onclick="addPost()">Post</button>
 </div>
 
-<div class="section-title">People</div>
-<div id="users"></div>
+<div id="feed">
+  <!-- posts will appear here -->
+</div>
 
-<div class="section-title">Feed</div>
-<div id="feed"></div>
-
-<script type="module" src="app.js"></script>
+<script src="app.js"></script>
 </body>
+</html>
