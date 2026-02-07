@@ -3,27 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>famliybook - Feed</title>
+<title>Family Book - Feed</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>famliybook</header>
-
-<div class="topbar">
-  <button onclick="location='profile.html'">Profile</button>
+<header class="topbar">
+  <h2>Family Book</h2>
   <button onclick="logout()">Logout</button>
-</div>
+</header>
 
 <div class="post-box">
   <textarea id="postText" placeholder="What's on your mind?"></textarea>
   <button onclick="addPost()">Post</button>
 </div>
 
-<div id="feed">
-  <!-- Posts appear here -->
-</div>
+<div id="feed"></div>
 
-<script type="module" src="app.js"></script>
+<!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script src="app.js"></script>
 </body>
 </html>
