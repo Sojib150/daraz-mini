@@ -1,162 +1,114 @@
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import {getDatabase,ref,push,onValue,set,remove,get} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import {getStorage,ref as sRef,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+// Firebase imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-const firebaseConfig={
-  apiKey:"AIzaSyB6b93A_HeU4FADs3o2Ysw6-dlRRS2TbZk",
-  authDomain:"telegram-miniapp-e8cc0.firebaseapp.com",
-  databaseURL:"https://telegram-miniapp-e8cc0-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId:"telegram-miniapp-e8cc0",
-  storageBucket:"telegram-miniapp-e8cc0.firebasestorage.app",
-  messagingSenderId:"827930913054",
-  appId:"1:827930913054:web:502b56e0c198d8e9ff410f"
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyB6b93A_HeU4FADs3o2Ysw6-dlRRS2TbZk",
+  authDomain: "telegram-miniapp-e8cc0.firebaseapp.com",
+  databaseURL: "https://telegram-miniapp-e8cc0-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "telegram-miniapp-e8cc0",
+  storageBucket: "telegram-miniapp-e8cc0.appspot.com",
+  messagingSenderId: "827930913054",
+  appId: "1:827930913054:web:502b56e0c198d8e9ff410f"
 };
 
-const app=initializeApp(firebaseConfig);
-const auth=getAuth();
-const db=getDatabase();
-const storage=getStorage();
+// Init
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
 
-let viewUser = localStorage.getItem("viewUser");
+// LOGIN
+window.login = function () {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-// ---------- AUTH ----------
-window.login=()=>signInWithEmailAndPassword(auth,email.value,password.value)
-.then(()=>location="feed.html");
-window.signup=()=>createUserWithEmailAndPassword(auth,email.value,password.value)
-.then(()=>location="feed.html");
-window.logout=()=>signOut(auth).then(()=>location="index.html");
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      location.href = "feed.html";
+    })
+    .catch(err => alert(err.message));
+};
 
-// ---------- AUTH STATE ----------
-onAuthStateChanged(auth,u=>{
-  if(!u && !location.pathname.includes("index")) location="index.html";
-  if(u){
-    if(location.pathname.includes("feed")) loadFeed(u);
-    if(location.pathname.includes("profile")) loadProfile(u);
+// LOGOUT
+window.logout = function () {
+  signOut(auth).then(() => location.href = "index.html");
+};
+
+// AUTH CHECK
+onAuthStateChanged(auth, user => {
+  if (!user && location.pathname.includes("feed")) {
+    location.href = "index.html";
   }
 });
 
-// ---------- POSTS ----------
-window.addPost=()=>{
-  push(ref(db,"posts"),{
-    uid:auth.currentUser.uid,
-    text:postText.value,
-    time:Date.now()
+// ADD POST
+window.addPost = function () {
+  const text = document.getElementById("postText").value;
+  if (!text) return;
+
+  const postRef = ref(db, "posts");
+  push(postRef, {
+    text: text,
+    likes: 0,
+    comments: {}
   });
-  postText.value="";
+
+  document.getElementById("postText").value = "";
 };
 
-function loadFeed(u){
-  loadUsers(u);
-  onValue(ref(db,"posts"),s=>{
-    feed.innerHTML="";
-    s.forEach(p=>{
-      feed.innerHTML+=`
-      <div class="post">
-        ${p.val().text}
-      </div>`;
-    });
-  });
-}
+// LOAD POSTS
+const feed = document.getElementById("feed");
+if (feed) {
+  const postRef = ref(db, "posts");
+  onValue(postRef, snapshot => {
+    feed.innerHTML = "";
+    snapshot.forEach(child => {
+      const post = child.val();
+      const postId = child.key;
 
-// ---------- USERS LIST ----------
-function loadUsers(u){
-  onValue(ref(db,"users"),s=>{
-    users.innerHTML="";
-    s.forEach(x=>{
-      if(x.key!==u.uid){
-        users.innerHTML+=`
-        <div class="post">
-          ${x.val().email}
-          <button onclick="openProfile('${x.key}')">View</button>
-        </div>`;
+      const div = document.createElement("div");
+      div.className = "post";
+
+      div.innerHTML = `
+        <p>${post.text}</p>
+        <button onclick="likePost('${postId}')">❤️ ${post.likes || 0}</button>
+        <div>
+          <input placeholder="Comment..." id="c-${postId}">
+          <button onclick="addComment('${postId}')">💬</button>
+        </div>
+      `;
+
+      // comments
+      if (post.comments) {
+        Object.values(post.comments).forEach(c => {
+          const p = document.createElement("p");
+          p.style.fontSize = "13px";
+          p.innerText = "💬 " + c;
+          div.appendChild(p);
+        });
       }
+
+      feed.appendChild(div);
     });
   });
 }
 
-window.openProfile=uid=>{
-  localStorage.setItem("viewUser",uid);
-  location="profile.html";
+// LIKE
+window.likePost = function (id) {
+  const likeRef = ref(db, "posts/" + id + "/likes");
+  onValue(likeRef, snap => {
+    likeRef.set((snap.val() || 0) + 1);
+  }, { onlyOnce: true });
 };
 
-// ---------- PROFILE ----------
-function loadProfile(u){
-  const uid=viewUser || u.uid;
+// COMMENT
+window.addComment = function (id) {
+  const input = document.getElementById("c-" + id);
+  if (!input.value) return;
 
-  get(ref(db,"users/"+uid)).then(s=>{
-    if(s.val()){
-      name.innerText=s.val().email;
-      bio.value=s.val().bio||"";
-      photo.src=s.val().photo||"";
-    }
-  });
-
-  if(uid===u.uid){
-    friendBtn.style.display="none";
-  }else{
-    setupFriendButton(u.uid,uid);
-  }
-
-  onValue(ref(db,"posts"),s=>{
-    myPosts.innerHTML="";
-    s.forEach(p=>{
-      if(p.val().uid===uid){
-        myPosts.innerHTML+=`<div class="post">${p.val().text}</div>`;
-      }
-    });
-  });
-}
-
-// ---------- FRIEND LOGIC ----------
-function setupFriendButton(me,other){
-  const btn=friendBtn;
-  get(ref(db,"friends/"+me+"/"+other)).then(f=>{
-    if(f.exists()){
-      btn.innerText="Friends";
-      btn.disabled=true;
-    }else{
-      get(ref(db,"requests/"+other+"/"+me)).then(r=>{
-        if(r.exists()){
-          btn.innerText="Accept Friend";
-          btn.onclick=()=>acceptFriend(me,other);
-        }else{
-          btn.innerText="Add Friend";
-          btn.onclick=()=>sendRequest(me,other);
-        }
-      });
-    }
-  });
-}
-
-function sendRequest(me,other){
-  set(ref(db,"requests/"+other+"/"+me),true);
-  alert("Friend request sent");
-}
-
-function acceptFriend(me,other){
-  set(ref(db,"friends/"+me+"/"+other),true);
-  set(ref(db,"friends/"+other+"/"+me),true);
-  remove(ref(db,"requests/"+me+"/"+other));
-  alert("Friend added");
-}
-
-// ---------- PROFILE UPDATE ----------
-window.saveProfile=()=>{
-  set(ref(db,"users/"+auth.currentUser.uid+"/bio"),bio.value);
-};
-
-window.uploadPhoto=e=>{
-  const r=sRef(storage,"profiles/"+auth.currentUser.uid);
-  uploadBytes(r,e.target.files[0])
-  .then(()=>getDownloadURL(r))
-  .then(url=>{
-    set(ref(db,"users/"+auth.currentUser.uid+"/photo"),url);
-    photo.src=url;
-  });
-};
-
-window.goProfile=()=>{
-  localStorage.removeItem("viewUser");
-  location="profile.html";
+  const cRef = ref(db, "posts/" + id + "/comments");
+  push(cRef, input.value);
+  input.value = "";
 };
