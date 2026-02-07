@@ -1,18 +1,22 @@
 <body>
 
 <div class="topbar">
-<span>MiniFacebook</span>
-<div>
-<button onclick="goProfile()">Profile</button>
-<button onclick="logout()">Logout</button>
-</div>
+  <span>MiniFacebook</span>
+  <div>
+    <button onclick="goProfile()">Profile</button>
+    <button onclick="logout()">Logout</button>
+  </div>
 </div>
 
 <div class="card">
-<textarea id="postText" placeholder="What's on your mind?"></textarea>
-<button onclick="addPost()">Post</button>
+  <textarea id="postText" placeholder="What's on your mind?"></textarea>
+  <button onclick="addPost()">Post</button>
 </div>
 
+<div class="section-title">People</div>
+<div id="users"></div>
+
+<div class="section-title">Feed</div>
 <div id="feed"></div>
 
 <script type="module" src="app.js"></script>
