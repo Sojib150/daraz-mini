@@ -1,30 +1,52 @@
 body {
   font-family: Arial;
+  margin: 0;
+  padding: 10px;
   background: #f0f2f5;
-  padding: 15px;
 }
 
-input, textarea {
-  width: 100%;
-  padding: 10px;
-  margin: 6px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+h2 {
+  text-align: center;
 }
 
-button {
+.post-box textarea {
+  width: 100%;
+  height: 60px;
+  padding: 10px;
+}
+
+.post-box button {
   width: 100%;
   padding: 10px;
+  margin-top: 5px;
   background: #1877f2;
   color: white;
   border: none;
-  border-radius: 6px;
-  margin-top: 6px;
+  border-radius: 5px;
 }
 
-p {
+.post {
   background: white;
   padding: 10px;
-  border-radius: 6px;
-  margin-top: 8px;
+  margin-top: 10px;
+  border-radius: 8px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.actions button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.comment-box input {
+  width: 100%;
+  padding: 5px;
+  margin-top: 5px;
 }
