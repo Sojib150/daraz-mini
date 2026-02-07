@@ -9,7 +9,7 @@ const firebaseConfig = {
   appId: "1:827930913054:web:502b56e0c198d8e9ff410f"
 };
 
-// Initialize Firebase
+// Init Firebase
 firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
@@ -22,18 +22,39 @@ const passwordInput = document.getElementById("password");
 
 // Login / Signup
 loginBtn.addEventListener("click", () => {
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
-    if(!email || !password) return alert("Please fill email & password");
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+  if (!email || !password) return alert("Fill both fields");
 
-    auth.signInWithEmailAndPassword(email,password)
-    .then(()=> location.href = "feed.html")
-    .catch(()=>{
-        auth.createUserWithEmailAndPassword(email,password)
-        .then(res=>{
-            db.ref("users/"+res.user.uid).set({ email, name: "New User" });
-            location.href = "feed.html";
-        })
-        .catch(err=> alert(err.message));
-    });
+  // Try login
+  auth.signInWithEmailAndPassword(email, password)
+  .then(() => { location.href = "feed.html"; })
+  .catch(err => {
+    // If login fails, signup
+    auth.createUserWithEmailAndPassword(email, password)
+    .then(res => {
+      db.ref("users/" + res.user.uid).set({
+        email: email,
+        name: "New User",
+        bio: "",
+        profilePic: "",
+        coverPic: ""
+      });
+      location.href = "feed.html";
+    })
+    .catch(e => alert(e.message));
+  });
 });
+
+// Auth State check
+auth.onAuthStateChanged(user => {
+  if (!user && window.location.pathname.includes("feed.html")) {
+    location.href = "index.html";
+  }
+});
+
+// Logout
+function logout() {
+  auth.signOut().then(() => location.href = "index.html");
+}
+window.logout = logout;
