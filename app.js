@@ -1,6 +1,6 @@
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import {getDatabase,ref,push,onValue,set} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import {getDatabase,ref,push,onValue,set,remove,get} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import {getStorage,ref as sRef,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 const firebaseConfig={
@@ -18,77 +18,145 @@ const auth=getAuth();
 const db=getDatabase();
 const storage=getStorage();
 
-// LOGIN
+let viewUser = localStorage.getItem("viewUser");
+
+// ---------- AUTH ----------
 window.login=()=>signInWithEmailAndPassword(auth,email.value,password.value)
 .then(()=>location="feed.html");
 window.signup=()=>createUserWithEmailAndPassword(auth,email.value,password.value)
 .then(()=>location="feed.html");
 window.logout=()=>signOut(auth).then(()=>location="index.html");
 
-// AUTH CHECK
+// ---------- AUTH STATE ----------
 onAuthStateChanged(auth,u=>{
-if(!u && !location.pathname.includes("index")) location="index.html";
-if(u && location.pathname.includes("profile")) loadProfile(u);
-if(u && location.pathname.includes("feed")) loadFeed();
+  if(!u && !location.pathname.includes("index")) location="index.html";
+  if(u){
+    if(location.pathname.includes("feed")) loadFeed(u);
+    if(location.pathname.includes("profile")) loadProfile(u);
+  }
 });
 
-// POSTS
+// ---------- POSTS ----------
 window.addPost=()=>{
-push(ref(db,"posts"),{
-uid:auth.currentUser.uid,
-text:postText.value,
-likes:0
-});
-postText.value="";
+  push(ref(db,"posts"),{
+    uid:auth.currentUser.uid,
+    text:postText.value,
+    time:Date.now()
+  });
+  postText.value="";
 };
 
-function loadFeed(){
-onValue(ref(db,"posts"),s=>{
-feed.innerHTML="";
-s.forEach(p=>{
-let d=p.val(),k=p.key;
-feed.innerHTML+=`
-<div class="post">
-${d.text}<br>
-<button onclick="likePost('${k}',${d.likes})">❤️ ${d.likes}</button>
-</div>`;
-});
-});
+function loadFeed(u){
+  loadUsers(u);
+  onValue(ref(db,"posts"),s=>{
+    feed.innerHTML="";
+    s.forEach(p=>{
+      feed.innerHTML+=`
+      <div class="post">
+        ${p.val().text}
+      </div>`;
+    });
+  });
 }
 
-window.likePost=(id,c)=>set(ref(db,"posts/"+id+"/likes"),c+1);
+// ---------- USERS LIST ----------
+function loadUsers(u){
+  onValue(ref(db,"users"),s=>{
+    users.innerHTML="";
+    s.forEach(x=>{
+      if(x.key!==u.uid){
+        users.innerHTML+=`
+        <div class="post">
+          ${x.val().email}
+          <button onclick="openProfile('${x.key}')">View</button>
+        </div>`;
+      }
+    });
+  });
+}
 
-// PROFILE
+window.openProfile=uid=>{
+  localStorage.setItem("viewUser",uid);
+  location="profile.html";
+};
+
+// ---------- PROFILE ----------
 function loadProfile(u){
-name.innerText=u.email;
-onValue(ref(db,"users/"+u.uid),s=>{
-if(s.val()){
-bio.value=s.val().bio||"";
-photo.src=s.val().photo||"";
-}
-});
-onValue(ref(db,"posts"),s=>{
-myPosts.innerHTML="";
-s.forEach(p=>{
-if(p.val().uid===u.uid){
-myPosts.innerHTML+=`<div class="post">${p.val().text}</div>`;
-}
-});
-});
+  const uid=viewUser || u.uid;
+
+  get(ref(db,"users/"+uid)).then(s=>{
+    if(s.val()){
+      name.innerText=s.val().email;
+      bio.value=s.val().bio||"";
+      photo.src=s.val().photo||"";
+    }
+  });
+
+  if(uid===u.uid){
+    friendBtn.style.display="none";
+  }else{
+    setupFriendButton(u.uid,uid);
+  }
+
+  onValue(ref(db,"posts"),s=>{
+    myPosts.innerHTML="";
+    s.forEach(p=>{
+      if(p.val().uid===uid){
+        myPosts.innerHTML+=`<div class="post">${p.val().text}</div>`;
+      }
+    });
+  });
 }
 
+// ---------- FRIEND LOGIC ----------
+function setupFriendButton(me,other){
+  const btn=friendBtn;
+  get(ref(db,"friends/"+me+"/"+other)).then(f=>{
+    if(f.exists()){
+      btn.innerText="Friends";
+      btn.disabled=true;
+    }else{
+      get(ref(db,"requests/"+other+"/"+me)).then(r=>{
+        if(r.exists()){
+          btn.innerText="Accept Friend";
+          btn.onclick=()=>acceptFriend(me,other);
+        }else{
+          btn.innerText="Add Friend";
+          btn.onclick=()=>sendRequest(me,other);
+        }
+      });
+    }
+  });
+}
+
+function sendRequest(me,other){
+  set(ref(db,"requests/"+other+"/"+me),true);
+  alert("Friend request sent");
+}
+
+function acceptFriend(me,other){
+  set(ref(db,"friends/"+me+"/"+other),true);
+  set(ref(db,"friends/"+other+"/"+me),true);
+  remove(ref(db,"requests/"+me+"/"+other));
+  alert("Friend added");
+}
+
+// ---------- PROFILE UPDATE ----------
 window.saveProfile=()=>{
-set(ref(db,"users/"+auth.currentUser.uid+"/bio"),bio.value);
+  set(ref(db,"users/"+auth.currentUser.uid+"/bio"),bio.value);
 };
 
 window.uploadPhoto=e=>{
-const r=sRef(storage,"profiles/"+auth.currentUser.uid);
-uploadBytes(r,e.target.files[0])
-.then(()=>getDownloadURL(r))
-.then(url=>{
-set(ref(db,"users/"+auth.currentUser.uid+"/photo"),url);
-photo.src=url;
-});
+  const r=sRef(storage,"profiles/"+auth.currentUser.uid);
+  uploadBytes(r,e.target.files[0])
+  .then(()=>getDownloadURL(r))
+  .then(url=>{
+    set(ref(db,"users/"+auth.currentUser.uid+"/photo"),url);
+    photo.src=url;
+  });
 };
 
-window.goProfile=()=>location="profile.html";
+window.goProfile=()=>{
+  localStorage.removeItem("viewUser");
+  location="profile.html";
+};
