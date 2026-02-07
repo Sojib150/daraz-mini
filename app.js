@@ -1,20 +1,25 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import {
   getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
 import {
   getDatabase,
   ref,
-  push,
-  set,
-  onValue,
-  update,
-  remove
+  set
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
-// Firebase config
+import {
+  getStorage,
+  ref as sRef,
+  uploadBytes,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-storage.js";
+
+// 🔹 Firebase config (unchanged)
 const firebaseConfig = {
   apiKey: "AIzaSyB6b93A_HeU4FADs3o2Ysw6-dlRRS2TbZk",
   authDomain: "telegram-miniapp-e8cc0.firebaseapp.com",
@@ -25,111 +30,50 @@ const firebaseConfig = {
   appId: "1:827930913054:web:502b56e0c198d8e9ff410f"
 };
 
+// Init
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
+const storage = getStorage(app);
 
-let currentUser = null;
+// Inputs
+const nameInput = document.getElementById("name");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const photoInput = document.getElementById("photo");
+const signupBtn = document.getElementById("signupBtn");
 
-onAuthStateChanged(auth, user => {
-  if (!user) location.href = "index.html";
-  currentUser = user;
-});
+signupBtn.onclick = async () => {
+  const name = nameInput.value;
+  const email = emailInput.value;
+  const password = passwordInput.value;
+  const photoFile = photoInput.files[0];
 
-// ===== CREATE POST =====
-window.createPost = () => {
-  const text = document.getElementById("postText").value;
-  if (!text) return;
+  if (!name || !email || !password || !photoFile) {
+    return alert("All fields required!");
+  }
 
-  const postRef = push(ref(db, "posts"));
-  set(postRef, {
-    text,
-    uid: currentUser.uid,
-    time: Date.now()
-  });
+  try {
+    // 1️⃣ Create user
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const uid = userCredential.user.uid;
 
-  document.getElementById("postText").value = "";
-};
+    // 2️⃣ Upload profile photo
+    const storageRef = sRef(storage, `profile_photos/${uid}`);
+    await uploadBytes(storageRef, photoFile);
+    const photoURL = await getDownloadURL(storageRef);
 
-// ===== LOAD POSTS =====
-const postsDiv = document.getElementById("posts");
-
-onValue(ref(db, "posts"), snap => {
-  postsDiv.innerHTML = "";
-  snap.forEach(postSnap => {
-    const postId = postSnap.key;
-    const post = postSnap.val();
-
-    const div = document.createElement("div");
-    div.className = "post";
-
-    div.innerHTML = `
-      <p>${post.text}</p>
-
-      <div class="actions">
-        <button onclick="likePost('${postId}')">❤️ Like</button>
-        <button onclick="toggleComment('${postId}')">💬 Comment</button>
-      </div>
-
-      <div id="likes-${postId}"></div>
-
-      <div id="comments-${postId}" style="display:none">
-        <div id="commentList-${postId}"></div>
-        <div class="comment-box">
-          <input placeholder="Write a comment..."
-            onkeydown="if(event.key==='Enter') addComment('${postId}', this)">
-        </div>
-      </div>
-    `;
-
-    postsDiv.prepend(div);
-
-    loadLikes(postId);
-    loadComments(postId);
-  });
-});
-
-// ===== LIKE SYSTEM =====
-window.likePost = postId => {
-  const likeRef = ref(db, `likes/${postId}/${currentUser.uid}`);
-  set(likeRef, true);
-};
-
-function loadLikes(postId) {
-  onValue(ref(db, `likes/${postId}`), snap => {
-    const count = snap.size || 0;
-    document.getElementById(`likes-${postId}`).innerText =
-      count + " likes";
-  });
-}
-
-// ===== COMMENT SYSTEM =====
-window.toggleComment = postId => {
-  const el = document.getElementById(`comments-${postId}`);
-  el.style.display = el.style.display === "none" ? "block" : "none";
-};
-
-window.addComment = (postId, input) => {
-  if (!input.value) return;
-
-  push(ref(db, `comments/${postId}`), {
-    text: input.value,
-    uid: currentUser.uid
-  });
-
-  input.value = "";
-};
-
-function loadComments(postId) {
-  onValue(ref(db, `comments/${postId}`), snap => {
-    const box = document.getElementById(`commentList-${postId}`);
-    if (!box) return;
-
-    box.innerHTML = "";
-    snap.forEach(c => {
-      const p = document.createElement("p");
-      p.innerText = "• " + c.val().text;
-      box.appendChild(p);
+    // 3️⃣ Save user data in Realtime DB
+    await set(ref(db, `users/${uid}`), {
+      name,
+      email,
+      photo: photoURL
     });
-  });
-}
+
+    alert("Signup successful! ✅");
+    location.href = "feed.html";
+
+  } catch (err) {
+    alert(err.message);
+  }
+};
