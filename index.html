@@ -1,119 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="bn">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Soul Sync Game</title>
-
-<style>
-body {
-    font-family: Arial;
-    text-align: center;
-    background: #111;
-    color: white;
-}
-
-button {
-    padding: 10px;
-    margin: 5px;
-    background: #ff4b5c;
-    border: none;
-    color: white;
-    border-radius: 5px;
-}
-
-input {
-    padding: 10px;
-    width: 80%;
-    margin: 10px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CashWin BD - রিয়েল ইনকাম</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin:0; background: linear-gradient(#0f0c29, #302b63); color: white; min-height: 100vh; }
+        .header { background: linear-gradient(#6a11cb, #2575fc); padding: 20px; text-align: center; font-size: 26px; }
+        .balance { text-align: center; padding: 25px; background: rgba(0,0,0,0.4); font-size: 28px; }
+        button { width: 90%; margin: 12px auto; display: block; padding: 18px; font-size: 18px; border: none; border-radius: 12px; color: white; }
+        .game-btn { background: #ff3366; }
+        .ad-btn { background: #00cc66; }
+        .refer-btn { background: #3366ff; }
+    </style>
 </head>
-
 <body>
+    <div class="header">💰 CashWin BD</div>
+    <div class="balance">ব্যালেন্স: <span id="balance">0</span> টাকা</div>
 
-<h2>💞 Soul Sync</h2>
+    <div style="padding: 20px;">
+        <button class="game-btn" onclick="playGame()">🎮 গেম খেলুন</button>
+        <button class="ad-btn" onclick="watchAd()">📺 অ্যাড দেখুন (১৫-৫০ টাকা)</button>
+        <button class="refer-btn" onclick="referFriend()">👥 রেফার করুন</button>
+        <button onclick="goToProfile()">👤 প্রোফাইল</button>
+        <button onclick="logout()">লগআউট</button>
+    </div>
 
-<div id="home">
-    <button onclick="createRoom()">Create Room</button>
-    <br>
-    <input id="roomId" placeholder="Enter Room Code">
-    <button onclick="joinRoom()">Join</button>
-</div>
+    <script type="module">
+        import { auth, db } from "./js/firebase.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+        import { ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 
-<div id="game" style="display:none;">
-    <h3 id="question"></h3>
-    <input id="answer" placeholder="Your answer">
-    <button onclick="submitAnswer()">Submit</button>
-</div>
+        let currentUser = null;
 
-<div id="result" style="display:none;">
-    <h2 id="match"></h2>
-</div>
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+            currentUser = user;
+            loadBalance(user.uid);
+        });
 
-<!-- Firebase v10 (IMPORTANT FIX) -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyD_TOgrehY8a5JD55FXHdRiFcZhHxctDkM",
-  authDomain: "seen-a1d92.firebaseapp.com",
-  databaseURL: "https://seen-a1d92-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "seen-a1d92",
-  storageBucket: "seen-a1d92.firebasestorage.app",
-  messagingSenderId: "868584044532",
-  appId: "1:868584044532:web:51f07436a883f88332eba1",
-  measurementId: "G-K4W1BWQ53V"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-let room = "";
-let playerId = "p" + Math.floor(Math.random()*10000);
-
-const questionText = "What is your partner's favorite food?";
-
-window.createRoom = function() {
-    room = Math.random().toString(36).substring(2,7);
-    alert("Room Code: " + room);
-    startGame();
-}
-
-window.joinRoom = function() {
-    room = document.getElementById("roomId").value;
-    startGame();
-}
-
-function startGame() {
-    document.getElementById("home").style.display = "none";
-    document.getElementById("game").style.display = "block";
-    document.getElementById("question").innerText = questionText;
-}
-
-window.submitAnswer = function() {
-    let ans = document.getElementById("answer").value;
-
-    set(ref(db, "rooms/" + room + "/" + playerId), ans);
-
-    onValue(ref(db, "rooms/" + room), (snap) => {
-        let data = snap.val();
-        if (data && Object.keys(data).length == 2) {
-            showResult(data);
+        function loadBalance(uid) {
+            const userRef = ref(db, 'users/' + uid);
+            onValue(userRef, (snapshot) => {
+                const data = snapshot.val();
+                document.getElementById('balance').textContent = data?.balance || 0;
+            });
         }
-    });
-}
 
-function showResult(data) {
-    document.getElementById("game").style.display = "none";
-    document.getElementById("result").style.display = "block";
+        window.playGame = () => {
+            if (!currentUser) return;
+            const earn = Math.floor(Math.random() * 85) + 25;
+            const userRef = ref(db, 'users/' + currentUser.uid);
+            update(userRef, { balance: (parseInt(document.getElementById('balance').textContent) || 0) + earn });
+            alert(`🎉 আপনি ${earn} টাকা জিতেছেন!`);
+        };
 
-    let answers = Object.values(data);
-    let match = (answers[0] === answers[1]) ? "100% Match ❤️" : "Not Matched 💔";
+        window.watchAd = () => {
+            if (!currentUser) return;
+            const earn = Math.floor(Math.random() * 40) + 15;
+            const userRef = ref(db, 'users/' + currentUser.uid);
+            update(userRef, { balance: (parseInt(document.getElementById('balance').textContent) || 0) + earn });
+            alert(`📺 অ্যাড দেখে ${earn} টাকা পেয়েছেন!`);
+        };
 
-    document.getElementById("match").innerText = match;
-}
-</script>
+        window.referFriend = () => {
+            alert("✅ রেফারেল লিংক কপি হয়েছে!\nপ্রতি সফল রেফারে ৮০ টাকা পাবেন।");
+        };
 
+        window.goToProfile = () => window.location.href = "profile.html";
+        window.logout = () => signOut(auth).then(() => window.location.href = "login.html");
+    </script>
 </body>
 </html>
