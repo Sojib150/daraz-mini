@@ -4,22 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>লগইন - CashWin BD</title>
-    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { font-family: Arial; background: #0f0c29; color: white; padding: 20px; }
+        input, button { width: 100%; padding: 15px; margin: 10px 0; border-radius: 10px; }
+        button { background: #6a11cb; color: white; font-size: 18px; }
+    </style>
 </head>
 <body>
-    <div style="padding:20px; text-align:center;">
-        <h1>🔑 লগইন করুন</h1>
-        
-        <input type="text" id="username" placeholder="ইউজারনেম" style="width:90%; padding:15px; margin:10px 0;"><br>
-        <input type="password" id="password" placeholder="পাসওয়ার্ড" style="width:90%; padding:15px; margin:10px 0;"><br>
-        
-        <button onclick="login()" style="width:90%; padding:15px; background:#6a11cb; color:white;">লগইন করুন</button>
-        
-        <p>ডেমো অ্যাকাউন্ট:<br>
-        Username: admin<br>
-        Password: 1234</p>
-    </div>
+    <h1 style="text-align:center;">🔑 লগইন</h1>
 
-    <script src="js/auth.js"></script>
+    <input type="email" id="email" placeholder="ইমেইল">
+    <input type="password" id="password" placeholder="পাসওয়ার্ড">
+
+    <button onclick="emailLogin()">ইমেইল দিয়ে লগইন</button>
+    <button onclick="googleLogin()" style="background:#db4437;">Google দিয়ে লগইন</button>
+    <button onclick="register()">নতুন অ্যাকাউন্ট তৈরি করুন</button>
+
+    <script type="module">
+        import { auth, googleProvider } from "./js/firebase.js";
+        import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
+        window.googleLogin = () => {
+            signInWithPopup(auth, googleProvider)
+                .then(() => window.location.href = "index.html")
+                .catch(err => alert(err.message));
+        };
+
+        window.emailLogin = () => {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            signInWithEmailAndPassword(auth, email, pass)
+                .then(() => window.location.href = "index.html")
+                .catch(err => alert(err.message));
+        };
+
+        window.register = () => {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            createUserWithEmailAndPassword(auth, email, pass)
+                .then(() => {
+                    alert("অ্যাকাউন্ট তৈরি হয়েছে!");
+                    window.location.href = "index.html";
+                })
+                .catch(err => alert(err.message));
+        };
+    </script>
 </body>
 </html>
