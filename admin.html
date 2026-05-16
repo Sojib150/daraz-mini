@@ -3,52 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - CashWin BD</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Admin Panel</title>
+    <style> body { padding:15px; background:#0f0c29; color:white; } </style>
 </head>
 <body>
-    <h1 style="text-align:center; background:#6a11cb; padding:15px;">👑 অ্যাডমিন প্যানেল</h1>
-    
-    <div style="padding:15px;">
-        <h2>ইউজারদের তথ্য</h2>
-        <div id="userList">লোড হচ্ছে...</div>
+    <h1>👑 অ্যাডমিন প্যানেল</h1>
+    <div id="users"></div>
 
-        <h2>টাকা দিন</h2>
-        <input type="text" id="userId" placeholder="ইউজারনেম" style="width:100%; padding:12px;">
-        <input type="number" id="amount" placeholder="টাকার পরিমাণ" style="width:100%; padding:12px;">
-        <button onclick="giveMoney()" style="width:100%; padding:15px; background:#00cc66;">টাকা দিন</button>
-    </div>
+    <script type="module">
+        import { auth, db } from "./js/firebase.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+        import { ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 
-    <script src="js/auth.js"></script>
-    <script>
-        checkLogin(); // লগইন চেক
-
-        // ডেমো ডাটা
-        let users = [
-            {name: "sojib", balance: 1250},
-            {name: "rahim123", balance: 450},
-            {name: "user45", balance: 890}
-        ];
-
-        function loadUsers() {
-            let html = "";
-            users.forEach(user => {
-                html += `<p><b>${user.name}</b> - ${user.balance} টাকা</p>`;
-            });
-            document.getElementById("userList").innerHTML = html;
-        }
-
-        function giveMoney() {
-            const username = document.getElementById("userId").value;
-            const amount = parseInt(document.getElementById("amount").value);
-            
-            if (username && amount) {
-                alert(`${amount} টাকা ${username} কে দেওয়া হয়েছে।`);
-                // এখানে পরে Firebase এ আপডেট হবে
+        onAuthStateChanged(auth, (user) => {
+            if (!user || user.email !== "তোমার_ইমেইল@gmail.com") {  // তোমার ইমেইল দাও
+                alert("অ্যাডমিন অ্যাক্সেস নেই");
+                window.location.href = "login.html";
             }
-        }
+        });
 
-        loadUsers();
+        // ইউজার লিস্ট দেখানো
+        const usersRef = ref(db, 'users');
+        onValue(usersRef, (snapshot) => {
+            let html = "<h2>ইউজার লিস্ট</h2>";
+            snapshot.forEach(child => {
+                const data = child.val();
+                html += `<p><b>${data.name || child.key}</b> - ${data.balance || 0} টাকা 
+                <button onclick="addBalance('${child.key}', 100)">+100</button></p>`;
+            });
+            document.getElementById('users').innerHTML = html;
+        });
+
+        window.addBalance = (uid, amount) => {
+            update(ref(db, 'users/' + uid), { balance: amount });
+            alert("টাকা দেওয়া হয়েছে!");
+        };
     </script>
 </body>
 </html>
