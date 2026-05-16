@@ -1,1 +1,54 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - CashWin BD</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1 style="text-align:center; background:#6a11cb; padding:15px;">👑 অ্যাডমিন প্যানেল</h1>
+    
+    <div style="padding:15px;">
+        <h2>ইউজারদের তথ্য</h2>
+        <div id="userList">লোড হচ্ছে...</div>
 
+        <h2>টাকা দিন</h2>
+        <input type="text" id="userId" placeholder="ইউজারনেম" style="width:100%; padding:12px;">
+        <input type="number" id="amount" placeholder="টাকার পরিমাণ" style="width:100%; padding:12px;">
+        <button onclick="giveMoney()" style="width:100%; padding:15px; background:#00cc66;">টাকা দিন</button>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        checkLogin(); // লগইন চেক
+
+        // ডেমো ডাটা
+        let users = [
+            {name: "sojib", balance: 1250},
+            {name: "rahim123", balance: 450},
+            {name: "user45", balance: 890}
+        ];
+
+        function loadUsers() {
+            let html = "";
+            users.forEach(user => {
+                html += `<p><b>${user.name}</b> - ${user.balance} টাকা</p>`;
+            });
+            document.getElementById("userList").innerHTML = html;
+        }
+
+        function giveMoney() {
+            const username = document.getElementById("userId").value;
+            const amount = parseInt(document.getElementById("amount").value);
+            
+            if (username && amount) {
+                alert(`${amount} টাকা ${username} কে দেওয়া হয়েছে।`);
+                // এখানে পরে Firebase এ আপডেট হবে
+            }
+        }
+
+        loadUsers();
+    </script>
+</body>
+</html>
