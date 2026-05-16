@@ -1,25 +1,20 @@
-// সিম্পল লগইন সিস্টেম (পরে Firebase দিয়ে আপগ্রেড করা যাবে)
-function login() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+// js/firebase.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 
-    if (username === "admin" && password === "1234") {
-        localStorage.setItem("isAdmin", "true");
-        localStorage.setItem("username", username);
-        window.location.href = "admin.html";
-    } 
-    else if (username && password) {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("username", username);
-        window.location.href = "index.html";
-    } else {
-        alert("ইউজারনেম বা পাসওয়ার্ড ভুল");
-    }
-}
+const firebaseConfig = {
+  apiKey: "AIzaSyBeCWMtjRiLaHhWiP-grW_8QDTRxf8ULLs",
+  authDomain: "sojida.firebaseapp.com",
+  databaseURL: "https://sojida-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "sojida",
+  storageBucket: "sojida.firebasestorage.app",
+  messagingSenderId: "194824640211",
+  appId: "1:194824640211:web:2149cd020f898f40996626",
+  measurementId: "G-6JVLZVLH7Q"
+};
 
-// লগইন চেক করার ফাংশন (সব পেজে ব্যবহার করবে)
-function checkLogin() {
-    if (!localStorage.getItem("isLoggedIn")) {
-        window.location.href = "login.html";
-    }
-}
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getDatabase(app);
+export const googleProvider = new GoogleAuthProvider();
